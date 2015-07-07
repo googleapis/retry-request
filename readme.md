@@ -95,7 +95,7 @@ var opts = {
   request: request
 };
 
-retryRequest(urlThatReturns404, function (err, resp, body) {
+retryRequest(urlThatReturns404, opts, function (err, resp, body) {
   // Your provided `request` instance was used.
 });
 ```
