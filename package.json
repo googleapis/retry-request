@@ -1,0 +1,29 @@
+{
+  "name": "retry-request",
+  "version": "0.0.0",
+  "description": "Retry a request.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 5000"
+  },
+  "files": [
+    "index.js",
+    "license"
+  ],
+  "keywords": [
+    "request",
+    "retry",
+    "stream"
+  ],
+  "author": "Stephen Sawchuk <sawchuk@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.58.0",
+    "stream-cache": "0.0.2",
+    "stream-forward": "^1.0.0",
+    "through2": "^2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}
