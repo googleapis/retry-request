@@ -33,15 +33,23 @@ function retryRequest(requestOpts, opts, callback) {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
 
-  var retryStream = through();
-  var requestStream;
-  var cacheStream;
-  var cachedEvents = {};
-
   var numAttempts = 0;
 
+  var retryStream;
+  var requestStream;
+  var cacheStream;
+
+  if (streamMode) {
+    retryStream = through();
+  }
+
+  makeRequest();
+
+  if (streamMode) {
+    return retryStream;
+  }
+
   function resetStreams() {
-    cachedEvents = {};
     cacheStream = null;
     requestStream.abort();
     requestStream.destroy();
@@ -97,9 +105,6 @@ function retryRequest(requestOpts, opts, callback) {
       callback(err, response, body);
     }
   }
-
-  makeRequest();
-  return retryStream;
 }
 
 module.exports = retryRequest;
