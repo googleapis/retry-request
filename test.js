@@ -100,3 +100,23 @@ describe('retry-request', function () {
     });
   });
 });
+
+describe('getNextRetryDelay', function() {
+  function secs(seconds) {
+    return seconds * 1000;
+  }
+
+  it('should return exponential retry delay', function() {
+    [1, 2, 3, 4, 5].forEach(assertTime);
+
+    function assertTime(retryNumber) {
+      var min = (Math.pow(2, retryNumber) * secs(1));
+      var max = (Math.pow(2, retryNumber) * secs(1)) + secs(1);
+
+      var time = retryRequest.getNextRetryDelay(retryNumber);
+
+      assert(time >= min && time <= max);
+    }
+  });
+});
+

@@ -14,7 +14,7 @@ var DEFAULTS = {
   },
 };
 
-module.exports = function (requestOpts, opts, callback) {
+function retryRequest(requestOpts, opts, callback) {
   var streamMode = typeof arguments[arguments.length - 1] !== 'function';
 
   if (typeof opts === 'function') {
@@ -38,7 +38,7 @@ module.exports = function (requestOpts, opts, callback) {
   var cacheStream;
   var cachedEvents = {};
 
-  var attempts = 0;
+  var numAttempts = 0;
 
   function resetStreams() {
     cachedEvents = {};
@@ -47,8 +47,8 @@ module.exports = function (requestOpts, opts, callback) {
     requestStream.destroy();
   }
 
-  function attempt() {
-    attempts++;
+  function makeRequest() {
+    numAttempts++;
 
     if (streamMode) {
       cacheStream = new StreamCache();
@@ -77,13 +77,12 @@ module.exports = function (requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (attempts <= opts.retries && opts.shouldRetryFn(response)) {
+    if (numAttempts <= opts.retries && opts.shouldRetryFn(response)) {
       if (streamMode) {
         resetStreams();
       }
 
-      attempt();
-
+      setTimeout(makeRequest, getNextRetryDelay(numAttempts));
       return;
     }
 
@@ -99,6 +98,14 @@ module.exports = function (requestOpts, opts, callback) {
     }
   }
 
-  attempt();
+  makeRequest();
   return retryStream;
-};
+}
+
+module.exports = retryRequest;
+
+function getNextRetryDelay(retryNumber) {
+  return (Math.pow(2, retryNumber) * 1000) + Math.floor(Math.random() * 1000);
+}
+
+module.exports.getNextRetryDelay = getNextRetryDelay;

@@ -1,6 +1,6 @@
 # retry-request
 
-> Retry a [request][request].
+> Retry a [request][request] with built-in [exponential backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/coreErrors#backoff).
 
 ## Use
 
