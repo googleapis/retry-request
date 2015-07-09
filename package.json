@@ -1,6 +1,6 @@
 {
   "name": "retry-request",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Retry a request.",
   "main": "index.js",
   "scripts": {
