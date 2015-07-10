@@ -13,6 +13,8 @@ var retryRequest = require('retry-request');
 
 It should work the same as `request` in both callback mode and stream mode.
 
+Note: This module only works when used as a readable stream, i.e. POST requests aren't supported  ([#3](https://github.com/stephenplusplus/retry-request/issues/3)).
+
 #### Callback
 
 `urlThatReturns404` will be requested 3 total times before giving up and executing the callback.
