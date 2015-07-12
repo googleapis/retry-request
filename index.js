@@ -62,7 +62,7 @@ function retryRequest(requestOpts, opts, callback) {
       cacheStream = new StreamCache();
       requestStream = opts.request(requestOpts);
 
-      streamForward(requestStream, ['complete'])
+      streamForward(requestStream)
         .on('error', onResponse)
         .on('response', onResponse.bind(null, null))
         .pipe(cacheStream);
@@ -96,9 +96,7 @@ function retryRequest(requestOpts, opts, callback) {
 
     // No more attempts need to be made, just continue on.
     if (streamMode) {
-      retryStream.emit('response', response);
-
-      streamForward(cacheStream, ['error', 'complete'])
+      streamForward(cacheStream)
         .on('error', resetStreams)
         .pipe(retryStream);
     } else {
