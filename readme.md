@@ -8,7 +8,7 @@
 $ npm install --save retry-request
 ```
 ```js
-var retryRequest = require('retry-request');
+var request = require('retry-request');
 ```
 
 It should work the same as `request` in both callback mode and stream mode.
@@ -17,24 +17,24 @@ Note: This module only works when used as a readable stream, i.e. POST requests 
 
 #### Callback
 
-`urlThatReturns404` will be requested 3 total times before giving up and executing the callback.
+`urlThatReturns503` will be requested 3 total times before giving up and executing the callback.
 
 ```js
-retryRequest(urlThatReturns404, function (err, resp, body) {});
+request(urlThatReturns503, function (err, resp, body) {});
 ```
 
 #### Stream
 
-`urlThatReturns404` will be requested 3 total times before giving up and emitting the `response` and `complete` event as usual.
+`urlThatReturns503` will be requested 3 total times before giving up and emitting the `response` and `complete` event as usual.
 
 ```js
-retryRequest(urlThatReturns404)
+request(urlThatReturns503)
   .on('error', function () {})
   .on('response', function () {})
   .on('complete', function () {});
 ```
 
-## retryRequest(requestOptions, [opts], [cb])
+## request(requestOptions, [opts], [cb])
 
 ### requestOptions
 
@@ -53,8 +53,8 @@ var opts = {
   retries: 4
 };
 
-retryRequest(urlThatReturns404, opts, function (err, resp, body) {
-  // urlThatReturns404 was requested a total of 5 times
+request(urlThatReturns503, opts, function (err, resp, body) {
+  // urlThatReturns503 was requested a total of 5 times
   // before giving up and executing this callback.
 });
 ```
@@ -72,7 +72,7 @@ var opts = {
   }
 };
 
-retryRequest(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
+request(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
   // urlThatReturnsNonOKStatusMessage was requested a
   // total of 3 times, each time using `opts.shouldRetryFn`
   // to decide if it should continue before giving up and
@@ -87,18 +87,18 @@ Type: `Function`
 Default: [`request`][request]
 
 ```js
-var request = require('request').defaults({
+var originalRequest = require('request').defaults({
   pool: {
     maxSockets: Infinity
   }
 });
 
 var opts = {
-  request: request
+  request: originalRequest
 };
 
-retryRequest(urlThatReturns404, opts, function (err, resp, body) {
-  // Your provided `request` instance was used.
+request(urlThatReturns503, opts, function (err, resp, body) {
+  // Your provided `originalRequest` instance was used.
 });
 ```
 
