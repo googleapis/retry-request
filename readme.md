@@ -1,8 +1,6 @@
-# retry-request
-
-> Retry a [request][request] with built-in [exponential backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/coreErrors#backoff).
-
-## Use
+|![retry-request](logo.png)
+|:-:
+|Retry a [request][request] with built-in [exponential backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/coreErrors#backoff).
 
 ```sh
 $ npm install --save retry-request
