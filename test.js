@@ -2,6 +2,7 @@
 
 var assert = require('assert');
 var retryRequest = require('./index.js');
+var through = require('through2');
 
 describe('retry-request', function () {
   var URI_404 = 'http://yahoo.com/theblahstore';
@@ -26,6 +27,89 @@ describe('retry-request', function () {
     it('emits an error', function (done) {
       retryRequest(URI_NON_EXISTENT)
         .on('error', function () {
+          done();
+        });
+    });
+
+    it('exposes an `abort` fuction to match request', function (done) {
+      var retryStream = retryRequest(URI_NON_EXISTENT);
+
+      retryStream.on('error', function () {
+        assert.equal(typeof retryStream.abort, 'function');
+        done();
+      });
+    });
+
+    it('works on the last attempt', function (done) {
+      var numAborts = 0;
+      var numAttempts = 0;
+
+      var opts = {
+        request: function () {
+          numAttempts++;
+
+          var fakeRequestStream = through();
+          fakeRequestStream.abort = function () {
+            numAborts++;
+          };
+
+          var response = numAttempts < 3 ? { statusCode: 503 } : { statusCode: 200 };
+          setImmediate(function () {
+            fakeRequestStream.emit('response', response);
+
+            setImmediate(function () {
+              // They all emit 'complete', but the user's stream should only get
+              // the last one.
+              fakeRequestStream.emit('complete', numAttempts);
+            });
+          });
+
+          return fakeRequestStream;
+        }
+      };
+
+      retryRequest(URI_404, opts)
+        .on('error', done)
+        .on('complete', function (numAttempts) {
+          assert.strictEqual(numAborts, 2);
+          assert.deepEqual(numAttempts, 3);
+          done();
+        });
+    });
+
+    it('never succeeds', function (done) {
+      var numAborts = 0;
+      var numAttempts = 0;
+
+      var opts = {
+        request: function () {
+          numAttempts++;
+
+          var fakeRequestStream = through();
+          fakeRequestStream.abort = function () {
+            numAborts++;
+          };
+
+          var response = { statusCode: 503 };
+          setImmediate(function () {
+            fakeRequestStream.emit('response', response);
+
+            setImmediate(function () {
+              // They all emit 'complete', but the user's stream should only get
+              // the last one.
+              fakeRequestStream.emit('complete', numAttempts);
+            });
+          });
+
+          return fakeRequestStream;
+        }
+      };
+
+      retryRequest(URI_404, opts)
+        .on('error', done)
+        .on('complete', function (numAttempts) {
+          assert.strictEqual(numAborts, 2);
+          assert.strictEqual(numAttempts, 3);
           done();
         });
     });
@@ -59,7 +143,7 @@ describe('retry-request', function () {
       var shouldRetryFnCalled = false;
 
       var opts = {
-        retries: 1, // so that our retry function is only called once and
+        retries: 1, // so that our retry function is only called once
 
         shouldRetryFn: function () {
           shouldRetryFnCalled = true;

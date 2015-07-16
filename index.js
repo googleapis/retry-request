@@ -41,6 +41,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   if (streamMode) {
     retryStream = through();
+    retryStream.abort = resetStreams;
   }
 
   makeRequest();
@@ -51,8 +52,11 @@ function retryRequest(requestOpts, opts, callback) {
 
   function resetStreams() {
     cacheStream = null;
-    requestStream.abort();
-    requestStream.destroy();
+
+    if (requestStream) {
+      requestStream.abort();
+      requestStream.destroy();
+    }
   }
 
   function makeRequest() {
@@ -62,7 +66,7 @@ function retryRequest(requestOpts, opts, callback) {
       cacheStream = new StreamCache();
       requestStream = opts.request(requestOpts);
 
-      streamForward(requestStream)
+      streamForward(requestStream, { events: ['response', 'complete'] })
         .on('error', onResponse)
         .on('response', onResponse.bind(null, null))
         .pipe(cacheStream);
@@ -97,8 +101,8 @@ function retryRequest(requestOpts, opts, callback) {
     // No more attempts need to be made, just continue on.
     if (streamMode) {
       streamForward(cacheStream)
-        .on('error', resetStreams)
-        .pipe(retryStream);
+        .pipe(retryStream)
+        .on('error', resetStreams);
     } else {
       callback(err, response, body);
     }
