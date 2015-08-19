@@ -20,7 +20,7 @@
   "dependencies": {
     "request": "^2.58.0",
     "stream-cache": "0.0.2",
-    "stream-forward": "^2.0.0",
+    "stream-forward": "^3.0.0",
     "through2": "^2.0.0"
   },
   "devDependencies": {

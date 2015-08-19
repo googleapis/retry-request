@@ -11,8 +11,14 @@ var DEFAULTS = {
   shouldRetryFn: function (response) {
     // Not a successful status or redirect.
     return response.statusCode < 200 || response.statusCode >= 400;
-  },
+  }
 };
+
+var REQUEST_EVENTS = [
+  'error',
+  'complete',
+  'response'
+];
 
 function retryRequest(requestOpts, opts, callback) {
   var streamMode = typeof arguments[arguments.length - 1] !== 'function';
@@ -66,7 +72,7 @@ function retryRequest(requestOpts, opts, callback) {
       cacheStream = new StreamCache();
       requestStream = opts.request(requestOpts);
 
-      streamForward(requestStream, { events: ['response', 'complete'] })
+      streamForward(requestStream, { events: REQUEST_EVENTS })
         .on('error', onResponse)
         .on('response', onResponse.bind(null, null))
         .pipe(cacheStream);
@@ -100,7 +106,7 @@ function retryRequest(requestOpts, opts, callback) {
 
     // No more attempts need to be made, just continue on.
     if (streamMode) {
-      streamForward(cacheStream)
+      streamForward(cacheStream, { events: REQUEST_EVENTS })
         .pipe(retryStream)
         .on('error', resetStreams);
     } else {
