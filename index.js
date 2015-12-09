@@ -2,7 +2,6 @@
 
 var request = require('request');
 var StreamCache = require('stream-cache');
-var streamForward = require('stream-forward');
 var through = require('through2');
 
 var DEFAULTS = {
@@ -13,12 +12,6 @@ var DEFAULTS = {
     return response.statusCode < 200 || response.statusCode >= 400;
   }
 };
-
-var REQUEST_EVENTS = [
-  'error',
-  'complete',
-  'response'
-];
 
 function retryRequest(requestOpts, opts, callback) {
   var streamMode = typeof arguments[arguments.length - 1] !== 'function';
@@ -72,9 +65,10 @@ function retryRequest(requestOpts, opts, callback) {
       cacheStream = new StreamCache();
       requestStream = opts.request(requestOpts);
 
-      streamForward(requestStream, { events: REQUEST_EVENTS })
+      requestStream
         .on('error', onResponse)
         .on('response', onResponse.bind(null, null))
+        .on('complete', retryStream.emit.bind(retryStream, 'complete'))
         .pipe(cacheStream);
     } else {
       opts.request(requestOpts, onResponse);
@@ -106,9 +100,8 @@ function retryRequest(requestOpts, opts, callback) {
 
     // No more attempts need to be made, just continue on.
     if (streamMode) {
-      streamForward(cacheStream, { events: REQUEST_EVENTS })
-        .pipe(retryStream)
-        .on('error', resetStreams);
+      retryStream.emit('response', response);
+      cacheStream.pipe(retryStream);
     } else {
       callback(err, response, body);
     }

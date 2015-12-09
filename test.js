@@ -53,13 +53,17 @@ describe('retry-request', function () {
             numAborts++;
           };
 
-          var response = numAttempts < 3 ? { statusCode: 503 } : { statusCode: 200 };
+          var shouldReturnError = numAttempts < 3;
+          var response = shouldReturnError ? { statusCode: 503 } : { statusCode: 200 };
+
           setImmediate(function () {
             fakeRequestStream.emit('response', response);
 
+            if (shouldReturnError) {
+              return;
+            }
+
             setImmediate(function () {
-              // They all emit 'complete', but the user's stream should only get
-              // the last one.
               fakeRequestStream.emit('complete', numAttempts);
             });
           });
@@ -93,12 +97,6 @@ describe('retry-request', function () {
           var response = { statusCode: 503 };
           setImmediate(function () {
             fakeRequestStream.emit('response', response);
-
-            setImmediate(function () {
-              // They all emit 'complete', but the user's stream should only get
-              // the last one.
-              fakeRequestStream.emit('complete', numAttempts);
-            });
           });
 
           return fakeRequestStream;
@@ -106,12 +104,12 @@ describe('retry-request', function () {
       };
 
       retryRequest(URI_404, opts)
-        .on('error', done)
-        .on('complete', function (numAttempts) {
+        .on('response', function() {
           assert.strictEqual(numAborts, 2);
           assert.strictEqual(numAttempts, 3);
           done();
-        });
+        })
+        .on('error', done);
     });
   });
 
