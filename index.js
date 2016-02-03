@@ -38,6 +38,15 @@ function retryRequest(requestOpts, opts, callback) {
   var requestStream;
   var cacheStream;
 
+  var activeRequest;
+  var retryRequest = {
+    abort: function() {
+      if (activeRequest && activeRequest.abort) {
+        activeRequest.abort();
+      }
+    }
+  };
+
   if (streamMode) {
     retryStream = through();
     retryStream.abort = resetStreams;
@@ -47,6 +56,8 @@ function retryRequest(requestOpts, opts, callback) {
 
   if (streamMode) {
     return retryStream;
+  } else {
+    return retryRequest;
   }
 
   function resetStreams() {
@@ -71,7 +82,7 @@ function retryRequest(requestOpts, opts, callback) {
         .on('complete', retryStream.emit.bind(retryStream, 'complete'))
         .pipe(cacheStream);
     } else {
-      opts.request(requestOpts, onResponse);
+      activeRequest = opts.request(requestOpts, onResponse);
     }
   }
 

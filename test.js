@@ -120,6 +120,19 @@ describe('retry-request', function () {
       });
     });
 
+    it('exposes an `abort` function', function(done) {
+      var opts = {
+        request: function () {
+          return {
+            abort: done
+          }
+        }
+      };
+
+      var request = retryRequest(URI_200, opts, assert.ifError)
+      request.abort()
+    });
+
     it('returns an error', function (done) {
       retryRequest(URI_NON_EXISTENT, function (err) {
         assert.equal(typeof err, 'object');
