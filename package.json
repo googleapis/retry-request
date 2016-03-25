@@ -18,7 +18,7 @@
   "author": "Stephen Sawchuk <sawchuk@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.58.0",
+    "request": "^2.69.0",
     "stream-cache": "0.0.2",
     "through2": "^2.0.0"
   },
