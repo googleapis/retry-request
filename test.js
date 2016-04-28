@@ -177,6 +177,26 @@ describe('retry-request', function () {
 
       retryRequest(URI_200, opts, function () {});
     });
+
+    it('should allow overriding retryOnError', function(done) {
+      var error = new Error('Oh noes!');
+      var requestCount = 0;
+      var opts = {
+        retryOnError: true,
+        request: function(reqOpts, callback) {
+          requestCount++;
+          callback(error);
+        },
+        shouldRetryFn: function (_error) {
+          return error === _error;
+        }
+      };
+
+      retryRequest(URI_200, opts, function () {
+        assert.strictEqual(requestCount, 3);
+        done();
+      });
+    });
   });
 
   it('should not do any retries if unnecessary', function (done) {
