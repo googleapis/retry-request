@@ -24,6 +24,11 @@ describe('retry-request', function () {
         });
     });
 
+    it('allows object mode', function () {
+      var retryStream = retryRequest(URI_404, { objectMode: true });
+      assert.strictEqual(retryStream._readableState.objectMode, true);
+    });
+
     it('emits an error', function (done) {
       retryRequest(URI_NON_EXISTENT)
         .on('error', function () {
@@ -104,7 +109,7 @@ describe('retry-request', function () {
       };
 
       retryRequest(URI_404, opts)
-        .on('response', function() {
+        .on('response', function () {
           assert.strictEqual(numAborts, 2);
           assert.strictEqual(numAttempts, 3);
           done();
@@ -120,17 +125,17 @@ describe('retry-request', function () {
       });
     });
 
-    it('exposes an `abort` function', function(done) {
+    it('exposes an `abort` function', function (done) {
       var opts = {
         request: function () {
           return {
             abort: done
-          }
+          };
         }
       };
 
-      var request = retryRequest(URI_200, opts, assert.ifError)
-      request.abort()
+      var request = retryRequest(URI_200, opts, assert.ifError);
+      request.abort();
     });
 
     it('returns an error', function (done) {
@@ -196,12 +201,12 @@ describe('retry-request', function () {
   });
 });
 
-describe('getNextRetryDelay', function() {
+describe('getNextRetryDelay', function () {
   function secs(seconds) {
     return seconds * 1000;
   }
 
-  it('should return exponential retry delay', function() {
+  it('should return exponential retry delay', function () {
     [1, 2, 3, 4, 5].forEach(assertTime);
 
     function assertTime(retryNumber) {

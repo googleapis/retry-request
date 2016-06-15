@@ -40,6 +40,14 @@ Passed directly to `request`. See the list of options supported: https://github.
 
 ### opts *(optional)*
 
+#### `opts.objectMode`
+
+Type: `Boolean`
+
+Default: `false`
+
+Set to `true` if your custom `opts.request` function returns a stream in object mode.
+
 #### `opts.retries`
 
 Type: `Number`
@@ -83,6 +91,8 @@ request(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
 Type: `Function`
 
 Default: [`request`][request]
+
+*NOTE: If you override the request function, and it returns a stream in object mode, be sure to set `opts.objectMode` to `true`.*
 
 ```js
 var originalRequest = require('request').defaults({

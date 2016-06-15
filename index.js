@@ -5,6 +5,7 @@ var StreamCache = require('stream-cache');
 var through = require('through2');
 
 var DEFAULTS = {
+  objectMode: false,
   request: request,
   retries: 2,
   shouldRetryFn: function (response) {
@@ -22,6 +23,9 @@ function retryRequest(requestOpts, opts, callback) {
 
   opts = opts || DEFAULTS;
 
+  if (typeof opts.objectMode === 'undefined') {
+    opts.objectMode = DEFAULTS.objectMode;
+  }
   if (typeof opts.request === 'undefined') {
     opts.request = DEFAULTS.request;
   }
@@ -40,7 +44,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   var activeRequest;
   var retryRequest = {
-    abort: function() {
+    abort: function () {
       if (activeRequest && activeRequest.abort) {
         activeRequest.abort();
       }
@@ -48,7 +52,7 @@ function retryRequest(requestOpts, opts, callback) {
   };
 
   if (streamMode) {
-    retryStream = through();
+    retryStream = through({ objectMode: opts.objectMode });
     retryStream.abort = resetStreams;
   }
 
