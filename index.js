@@ -1,7 +1,6 @@
 'use strict';
 
 var request = require('request');
-var StreamCache = require('stream-cache');
 var through = require('through2');
 
 var DEFAULTS = {
@@ -40,7 +39,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   var retryStream;
   var requestStream;
-  var cacheStream;
+  var delayStream;
 
   var activeRequest;
   var retryRequest = {
@@ -65,7 +64,7 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function resetStreams() {
-    cacheStream = null;
+    delayStream = null;
 
     if (requestStream) {
       requestStream.abort();
@@ -77,14 +76,14 @@ function retryRequest(requestOpts, opts, callback) {
     numAttempts++;
 
     if (streamMode) {
-      cacheStream = new StreamCache();
+      delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
       requestStream
         .on('error', onResponse)
         .on('response', onResponse.bind(null, null))
         .on('complete', retryStream.emit.bind(retryStream, 'complete'))
-        .pipe(cacheStream);
+        .pipe(delayStream);
     } else {
       activeRequest = opts.request(requestOpts, onResponse);
     }
@@ -116,7 +115,7 @@ function retryRequest(requestOpts, opts, callback) {
     // No more attempts need to be made, just continue on.
     if (streamMode) {
       retryStream.emit('response', response);
-      cacheStream.pipe(retryStream);
+      delayStream.pipe(retryStream);
     } else {
       callback(err, response, body);
     }
