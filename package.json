@@ -19,10 +19,10 @@
   "author": "Stephen Sawchuk <sawchuk@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=0.12"
+    "node": ">=4"
   },
   "dependencies": {
-    "request": "2.76.0",
+    "request": "^2.81.0",
     "through2": "^2.0.0"
   },
   "devDependencies": {
