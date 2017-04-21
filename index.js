@@ -7,7 +7,8 @@ var DEFAULTS = {
   objectMode: false,
   request: request,
   retries: 2,
-  shouldRetryFn: function (response) {
+  retryOnError: false,
+  shouldRetryFn: function (err, response) {
     // Not a successful status or redirect.
     return response.statusCode < 200 || response.statusCode >= 400;
   }
@@ -33,6 +34,9 @@ function retryRequest(requestOpts, opts, callback) {
   }
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
+  }
+  if (typeof opts.retryOnError !== 'boolean') {
+    opts.retryOnError = DEFAULTS.retryOnError;
   }
 
   var numAttempts = 0;
@@ -90,8 +94,9 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function onResponse(err, response, body) {
+    var maxAttemptsMade = numAttempts > opts.retries;
     // An error such as DNS resolution.
-    if (err) {
+    if (err && (!opts.retryOnError || maxAttemptsMade)) {
       if (streamMode) {
         retryStream.emit('error', err);
         retryStream.end();
@@ -103,7 +108,7 @@ function retryRequest(requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (numAttempts <= opts.retries && opts.shouldRetryFn(response)) {
+    if (!maxAttemptsMade && opts.shouldRetryFn(err, response)) {
       if (streamMode) {
         resetStreams();
       }

@@ -73,7 +73,7 @@ Default: Returns `true` if [http.incomingMessage](https://nodejs.org/api/http.ht
 
 ```js
 var opts = {
-  shouldRetryFn: function (incomingHttpMessage) {
+  shouldRetryFn: function (error, incomingHttpMessage) {
     return incomingHttpMessage.statusMessage !== 'OK';
   }
 };
@@ -107,6 +107,29 @@ var opts = {
 
 request(urlThatReturns503, opts, function (err, resp, body) {
   // Your provided `originalRequest` instance was used.
+});
+```
+
+#### `opts.retryOnError`
+
+Type: `Boolean`
+
+Default: `false`
+
+```js
+var opts = {
+  retryOnError: true,
+  request: function(reqOpts, callback) {
+    return someOtherTransportThatMightThrowAnError(reqOpts, callback);
+  },
+  shouldRetryFn: function(error, incomingHttpMessage) {
+    return error.message = 'Oh noes!';
+  }
+};
+
+request(optionsForDifferentTransport, opts, function (err, resp, body) {
+  // A custom transport was used and the requests
+  // were retried twice even though an error was thrown
 });
 ```
 
