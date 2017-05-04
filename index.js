@@ -35,7 +35,10 @@ function retryRequest(requestOpts, opts, callback) {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
 
+  var MAX_NO_RESPONSE_RETRIES = 2;
+
   var numAttempts = 0;
+  var numNoResponseAttempts = 0;
 
   var retryStream;
   var requestStream;
@@ -89,14 +92,28 @@ function retryRequest(requestOpts, opts, callback) {
     }
   }
 
+  function retryAfterDelay(numAttempts) {
+    if (streamMode) {
+      resetStreams();
+    }
+
+    setTimeout(makeRequest, getNextRetryDelay(numAttempts));
+  }
+
   function onResponse(err, response, body) {
     // An error such as DNS resolution.
     if (err) {
-      if (streamMode) {
-        retryStream.emit('error', err);
-        retryStream.end();
+      numNoResponseAttempts++;
+
+      if (numNoResponseAttempts <= MAX_NO_RESPONSE_RETRIES) {
+        retryAfterDelay(numNoResponseAttempts);
       } else {
-        callback(err, response, body);
+        if (streamMode) {
+          retryStream.emit('error', err);
+          retryStream.end();
+        } else {
+          callback(err, response, body);
+        }
       }
 
       return;
@@ -104,11 +121,7 @@ function retryRequest(requestOpts, opts, callback) {
 
     // Send the response to see if we should try again.
     if (numAttempts <= opts.retries && opts.shouldRetryFn(response)) {
-      if (streamMode) {
-        resetStreams();
-      }
-
-      setTimeout(makeRequest, getNextRetryDelay(numAttempts));
+      retryAfterDelay(numAttempts);
       return;
     }
 
