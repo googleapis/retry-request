@@ -70,8 +70,14 @@ function retryRequest(requestOpts, opts, callback) {
     delayStream = null;
 
     if (requestStream) {
-      requestStream.abort();
-      requestStream.destroy();
+      requestStream.abort && requestStream.abort();
+      requestStream.cancel && requestStream.cancel();
+
+      if (requestStream.destroy) {
+        requestStream.destroy();  
+      } else {
+        requestStream.end();
+      }
     }
   }
 
