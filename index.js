@@ -75,7 +75,7 @@ function retryRequest(requestOpts, opts, callback) {
 
       if (requestStream.destroy) {
         requestStream.destroy();  
-      } else {
+      } else if (requestStream.end) {
         requestStream.end();
       }
     }
