@@ -78,6 +78,8 @@ function retryRequest(requestOpts, opts, callback) {
       } else if (requestStream.end) {
         requestStream.end();
       }
+      
+      requestStream.removeAllListeners();
     }
   }
 
