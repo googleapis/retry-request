@@ -89,9 +89,9 @@ function retryRequest(requestOpts, opts, callback) {
       requestStream = opts.request(requestOpts);
 
       requestStream
-        .on('error', onResponse)
-        .on('response', onResponse.bind(null, null))
-        .on('complete', retryStream.emit.bind(retryStream, 'complete'))
+        .once('error', onResponse)
+        .once('response', onResponse.bind(null, null))
+        .once('complete', retryStream.emit.bind(retryStream, 'complete'))
         .pipe(delayStream);
     } else {
       activeRequest = opts.request(requestOpts, onResponse);
