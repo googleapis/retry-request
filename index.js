@@ -1,5 +1,6 @@
 'use strict';
 
+var firstEvent = require('first-event');
 var request = require('request');
 var through = require('through2');
 
@@ -88,11 +89,15 @@ function retryRequest(requestOpts, opts, callback) {
       delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
+      firstEvent(requestStream, ['error', 'response'])
+        .then(resp => onResponse.apply(null, [null].concat(resp.args)))
+        .catch(onResponse);
+
       requestStream
-        .on('error', onResponse)
-        .once('response', onResponse.bind(null, null))
-        .once('complete', retryStream.emit.bind(retryStream, 'complete'))
-        .pipe(delayStream);
+        .on('error', function() {}) // Cannot remove. Node internals get confused: https://github.com/stephenplusplus/retry-request/pull/11#discussion_r118394078
+        .on('complete', retryStream.emit.bind(retryStream, 'complete'));
+
+      requestStream.pipe(delayStream);
     } else {
       activeRequest = opts.request(requestOpts, onResponse);
     }
