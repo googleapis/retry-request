@@ -44,8 +44,6 @@ function retryRequest(requestOpts, opts, callback) {
   var requestStream;
   var delayStream;
 
-  var removeAllListeners;
-
   var activeRequest;
   var retryRequest = {
     abort: function () {
@@ -76,14 +74,9 @@ function retryRequest(requestOpts, opts, callback) {
       requestStream.cancel && requestStream.cancel();
 
       if (requestStream.destroy) {
-        requestStream.destroy();  
+        requestStream.destroy();
       } else if (requestStream.end) {
         requestStream.end();
-      }
-
-      if (removeAllListeners) {
-        removeAllListeners();
-        removeAllListeners = null;
       }
     }
   }
@@ -95,24 +88,11 @@ function retryRequest(requestOpts, opts, callback) {
       delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
-      var events = {
-        error: onResponse,
-        response: onResponse.bind(null, null),
-        complete: retryStream.emit.bind(retryStream, 'complete')
-      };
-
-      for (var eventName in events) {
-        requestStream.once(eventName, events[eventName]);
-      }
-
-      removeAllListeners = function() {
-        for (var eventName in events) {
-          requestStream.on(eventName, function() {});
-          requestStream.removeListener(eventName, events[eventName]);
-        }
-      };
-
-      requestStream.pipe(delayStream);
+      requestStream
+        .on('error', onResponse)
+        .once('response', onResponse.bind(null, null))
+        .once('complete', retryStream.emit.bind(retryStream, 'complete'))
+        .pipe(delayStream);
     } else {
       activeRequest = opts.request(requestOpts, onResponse);
     }
