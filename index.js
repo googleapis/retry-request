@@ -1,6 +1,5 @@
 'use strict';
 
-var firstEvent = require('first-event');
 var request = require('request');
 var through = require('through2');
 
@@ -40,6 +39,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   var numAttempts = 0;
   var numNoResponseAttempts = 0;
+  var streamResponseHandled = false;
 
   var retryStream;
   var requestStream;
@@ -86,15 +86,31 @@ function retryRequest(requestOpts, opts, callback) {
     numAttempts++;
 
     if (streamMode) {
+      streamResponseHandled = false;
+
       delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
-      firstEvent(requestStream, ['error', 'response'])
-        .then(resp => onResponse.apply(null, [null].concat(resp.args)))
-        .catch(onResponse);
-
       requestStream
-        .on('error', function() {}) // Cannot remove. Node internals get confused: https://github.com/stephenplusplus/retry-request/pull/11#discussion_r118394078
+        // gRPC via google-cloud-node can emit an `error` as well as a `response`
+        // Whichever it emits, we run with-- we can't run with both. That's what
+        // is up with the `streamResponseHandled` tracking.
+        .on('error', function(err) {
+          if (streamResponseHandled) {
+            return;
+          }
+
+          streamResponseHandled = true;
+          onResponse(err);
+        })
+        .on('response', function(resp, body) {
+          if (streamResponseHandled) {
+            return;
+          }
+
+          streamResponseHandled = true;
+          onResponse(null, resp, body);
+        })
         .on('complete', retryStream.emit.bind(retryStream, 'complete'));
 
       requestStream.pipe(delayStream);
