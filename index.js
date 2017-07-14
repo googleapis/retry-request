@@ -8,8 +8,28 @@ var DEFAULTS = {
   request: request,
   retries: 2,
   shouldRetryFn: function (response) {
-    // Not a successful status or redirect.
-    return response.statusCode < 200 || response.statusCode >= 400;
+    var retryRanges = [
+      // https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+      // 1xx - Retry (Informational, request still processing)
+      // 2xx - Do not retry (Success)
+      // 3xx - Do not retry (Redirect)
+      // 4xx - Do not retry (Client errors)
+      // 429 - Retry ("Too Many Requests")
+      // 5xx - Retry (Server errors)
+      [100, 199],
+      [429, 429],
+      [500, 599]
+    ];
+
+    var statusCode = response.statusCode;
+
+    var range;
+    while ((range = retryRanges.shift())) {
+      if (statusCode >= range[0] && statusCode <= range[1]) {
+        // Not a successful status or redirect.
+        return true;
+      }
+    }
   }
 };
 

@@ -26,6 +26,8 @@
     "through2": "^2.0.0"
   },
   "devDependencies": {
+    "async": "^2.5.0",
+    "lodash.range": "^3.2.0",
     "mocha": "^2.2.5"
   }
 }
