@@ -187,7 +187,7 @@ describe('retry-request', function () {
     });
   });
 
-  describe.only('shouldRetryFn', function() {
+  describe('shouldRetryFn', function() {
     var URI = 'http://';
 
     function assertRetried(statusCode, callback) {
