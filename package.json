@@ -12,6 +12,7 @@
     "index.d.ts",
     "license"
   ],
+  "types": "index.d.ts",
   "keywords": [
     "request",
     "retry",
