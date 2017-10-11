@@ -9,8 +9,10 @@
   },
   "files": [
     "index.js",
+    "index.d.ts",
     "license"
   ],
+  "types": "index.d.ts",
   "keywords": [
     "request",
     "retry",
