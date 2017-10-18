@@ -120,7 +120,6 @@ describe('retry-request', function () {
         .on('error', done);
     });
   });
-  
   describe('callbacks', function () {
     it('works with defaults with a callback', function (done) {
       retryRequest(URI_404, function () {
@@ -159,11 +158,21 @@ describe('retry-request', function () {
     });
 
     it('should allow overriding noResponseRetries', function (done) {
-      var opts = { noResponseRetries: 0 };
-      
-      retryRequest(URI_NON_EXISTENT, opts, function () {
-        done();
-      });
+      var numAttempts = 0;
+      var opts = {
+        request: function () {
+          numAttempts++;
+          var fakeRequestStream = through();
+          return fakeRequestStream;
+        },
+        noResponseRetries: 0
+      };
+
+      retryRequest(URI_404, opts)
+        .on('complete', function() {
+          assert.strictEqual(numAttempts, 1);
+          done();
+        });      
     });
 
     it('should allow overriding shouldRetryFn', function (done) {
