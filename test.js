@@ -120,7 +120,7 @@ describe('retry-request', function () {
         .on('error', done);
     });
   });
-
+  
   describe('callbacks', function () {
     it('works with defaults with a callback', function (done) {
       retryRequest(URI_404, function () {
@@ -154,6 +154,14 @@ describe('retry-request', function () {
       var opts = { retries: 0 };
 
       retryRequest(URI_404, opts, function () {
+        done();
+      });
+    });
+
+    it('should allow overriding noResponseRetries', function (done) {
+      var opts = { noResponseRetries: 0 };
+      
+      retryRequest(URI_NON_EXISTENT, opts, function () {
         done();
       });
     });
@@ -294,4 +302,3 @@ describe('getNextRetryDelay', function () {
     }
   });
 });
-

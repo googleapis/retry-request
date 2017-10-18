@@ -7,6 +7,7 @@ var DEFAULTS = {
   objectMode: false,
   request: request,
   retries: 2,
+  noResponseRetries: 2,
   shouldRetryFn: function (response) {
     var retryRanges = [
       // https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -54,8 +55,6 @@ function retryRequest(requestOpts, opts, callback) {
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
-
-  var MAX_NO_RESPONSE_RETRIES = 2;
 
   var numAttempts = 0;
   var numNoResponseAttempts = 0;
@@ -152,7 +151,7 @@ function retryRequest(requestOpts, opts, callback) {
     if (err) {
       numNoResponseAttempts++;
 
-      if (numNoResponseAttempts <= MAX_NO_RESPONSE_RETRIES) {
+      if (numNoResponseAttempts <= opts.noResponseRetries) {
         retryAfterDelay(numNoResponseAttempts);
       } else {
         if (streamMode) {
