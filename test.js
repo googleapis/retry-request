@@ -158,6 +158,25 @@ describe('retry-request', function () {
       });
     });
 
+    it('should allow overriding noResponseRetries', function (done) {
+      var numAttempts = 0;
+      var error = new Error('ENOTFOUND');
+
+      var opts = {
+        noResponseRetries: 0,
+        request: function (opts, callback) {
+          numAttempts++;
+          callback(error);
+        }
+      };
+
+      retryRequest(URI_NON_EXISTENT, opts, function (err) {
+        assert.strictEqual(numAttempts, 1);
+        assert.strictEqual(err, error);
+        done();
+      });
+    });
+
     it('should allow overriding shouldRetryFn', function (done) {
       var shouldRetryFnCalled = false;
 
@@ -294,4 +313,3 @@ describe('getNextRetryDelay', function () {
     }
   });
 });
-
