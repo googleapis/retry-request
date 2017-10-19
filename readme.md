@@ -40,6 +40,25 @@ Passed directly to `request`. See the list of options supported: https://github.
 
 ### opts *(optional)*
 
+#### `opts.noResponseRetries`
+
+Type: `Number`
+
+Default: `2`
+
+The number of times to retry after a response fails to come through, such as a DNS resolution error or a socket hangup.
+
+```js
+var opts = {
+  noResponseRetries: 0
+};
+
+request(url, opts, function (err, resp, body) {
+  // url was requested 1 time before giving up and
+  // executing this callback.
+});
+```
+
 #### `opts.objectMode`
 
 Type: `Boolean`
