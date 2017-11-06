@@ -114,7 +114,7 @@ function retryRequest(requestOpts, opts, callback) {
         // gRPC via google-cloud-node can emit an `error` as well as a `response`
         // Whichever it emits, we run with-- we can't run with both. That's what
         // is up with the `streamResponseHandled` tracking.
-        .on('error', function(err) {
+        .on('error', function (err) {
           if (streamResponseHandled) {
             return;
           }
@@ -122,7 +122,7 @@ function retryRequest(requestOpts, opts, callback) {
           streamResponseHandled = true;
           onResponse(err);
         })
-        .on('response', function(resp, body) {
+        .on('response', function (resp, body) {
           if (streamResponseHandled) {
             return;
           }
@@ -175,6 +175,9 @@ function retryRequest(requestOpts, opts, callback) {
     if (streamMode) {
       retryStream.emit('response', response);
       delayStream.pipe(retryStream);
+      requestStream.on('error', function (err) {
+        retryStream.destroy(err);
+      });
     } else {
       callback(err, response, body);
     }

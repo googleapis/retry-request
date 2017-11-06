@@ -119,6 +119,34 @@ describe('retry-request', function () {
         })
         .on('error', done);
     });
+
+    it.only('forwards a request error', function (done) {
+      var error = new Error('Error.');
+
+      var opts = {
+        request: function () {
+          var fakeRequestStream = through();
+
+          setImmediate(function () {
+            fakeRequestStream.emit('response', {
+              statusCode: 200
+            });
+
+            setImmediate(function () {
+              fakeRequestStream.destroy(error);
+            });
+          });
+
+          return fakeRequestStream;
+        }
+      };
+
+      retryRequest(URI_200, opts)
+        .on('error', function(err) {
+          assert.strictEqual(err, error);
+          done();
+        });
+    });
   });
 
   describe('callbacks', function () {
@@ -206,14 +234,14 @@ describe('retry-request', function () {
     });
   });
 
-  describe('shouldRetryFn', function() {
+  describe('shouldRetryFn', function () {
     var URI = 'http://';
 
     function assertRetried(statusCode, callback) {
       var initialRequestMade = false;
 
       retryRequest(URI, {
-        request: function(_, responseHandler) {
+        request: function (_, responseHandler) {
           if (initialRequestMade) {
             // This is a retry attempt. "Test passed"
             callback();
@@ -231,12 +259,12 @@ describe('retry-request', function () {
       var requestWasRetried = false;
 
       retryRequest(URI, {
-        request: function(_, responseHandler) {
+        request: function (_, responseHandler) {
           requestWasRetried = initialRequestMade;
           initialRequestMade = true;
           responseHandler(null, { statusCode: statusCode });
         }
-      }, function(err) {
+      }, function (err) {
         if (err) {
           callback(err);
           return;
@@ -251,29 +279,29 @@ describe('retry-request', function () {
       });
     }
 
-    it('should retry a 1xx code', function(done) {
+    it('should retry a 1xx code', function (done) {
       async.each(range(100, 199), assertRetried, done);
     });
 
-    it('should not retry a 2xx code', function(done) {
+    it('should not retry a 2xx code', function (done) {
       async.each(range(200, 299), assertNotRetried, done);
     });
 
-    it('should not retry a 3xx code', function(done) {
+    it('should not retry a 3xx code', function (done) {
       async.each(range(300, 399), assertNotRetried, done);
     });
 
-    it('should not retry a 4xx code', function(done) {
+    it('should not retry a 4xx code', function (done) {
       var statusCodes = range(400, 428).concat(range(430, 499));
 
       async.each(statusCodes, assertNotRetried, done);
     });
 
-    it('should retry a 429 code', function(done) {
+    it('should retry a 429 code', function (done) {
       assertRetried(429, done);
     });
 
-    it('should retry a 5xx code', function(done) {
+    it('should retry a 5xx code', function (done) {
       async.each(range(500, 599), assertRetried, done);
     });
   });
