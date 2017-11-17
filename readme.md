@@ -84,6 +84,22 @@ request(urlThatReturns503, opts, function (err, resp, body) {
 });
 ```
 
+#### `opts.currentRetryAttempt`
+
+Type: `Number`
+
+Default: `0`
+
+```js
+var opts = {
+  currentRetryAttempt: 1
+};
+
+request(urlThatReturns503, opts, function (err, resp, body) {
+  // urlThatReturns503 was requested as if it already failed once.
+});
+```
+
 #### `opts.shouldRetryFn`
 
 Type: `Function`

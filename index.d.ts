@@ -8,6 +8,7 @@ declare module 'retry-request' {
       request?: typeof request,
       retries?: number,
       noResponseRetries?: number,
+      currentRetryAttempt?: number,
       shouldRetryFn?: (response: request.RequestResponse) => boolean
     }
   }

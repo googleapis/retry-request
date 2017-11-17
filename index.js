@@ -52,11 +52,13 @@ function retryRequest(requestOpts, opts, callback) {
   if (typeof opts.retries !== 'number') {
     opts.retries = DEFAULTS.retries;
   }
+  if (typeof opts.currentRetryAttempt !== 'number') {
+    opts.currentRetryAttempt = 0;
+  }
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
 
-  var numAttempts = 0;
   var numNoResponseAttempts = 0;
   var streamResponseHandled = false;
 
@@ -102,7 +104,7 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function makeRequest() {
-    numAttempts++;
+    opts.currentRetryAttempt++;
 
     if (streamMode) {
       streamResponseHandled = false;
@@ -138,12 +140,12 @@ function retryRequest(requestOpts, opts, callback) {
     }
   }
 
-  function retryAfterDelay(numAttempts) {
+  function retryAfterDelay(currentRetryAttempt) {
     if (streamMode) {
       resetStreams();
     }
 
-    setTimeout(makeRequest, getNextRetryDelay(numAttempts));
+    setTimeout(makeRequest, getNextRetryDelay(currentRetryAttempt));
   }
 
   function onResponse(err, response, body) {
@@ -166,8 +168,8 @@ function retryRequest(requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (numAttempts <= opts.retries && opts.shouldRetryFn(response)) {
-      retryAfterDelay(numAttempts);
+    if (opts.currentRetryAttempt <= opts.retries && opts.shouldRetryFn(response)) {
+      retryAfterDelay(opts.currentRetryAttempt);
       return;
     }
 
