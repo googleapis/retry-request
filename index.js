@@ -8,6 +8,7 @@ var DEFAULTS = {
   request: request,
   retries: 2,
   noResponseRetries: 2,
+  currentRetryAttempt: 0,
   shouldRetryFn: function (response) {
     var retryRanges = [
       // https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -53,11 +54,13 @@ function retryRequest(requestOpts, opts, callback) {
     opts.retries = DEFAULTS.retries;
   }
   if (typeof opts.currentRetryAttempt !== 'number') {
-    opts.currentRetryAttempt = 0;
+    opts.currentRetryAttempt = DEFAULTS.currentRetryAttempt;
   }
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
+
+  var currentRetryAttempt = opts.currentRetryAttempt;
 
   var numNoResponseAttempts = 0;
   var streamResponseHandled = false;
@@ -104,7 +107,7 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function makeRequest() {
-    opts.currentRetryAttempt++;
+    currentRetryAttempt++;
 
     if (streamMode) {
       streamResponseHandled = false;
@@ -168,8 +171,8 @@ function retryRequest(requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (opts.currentRetryAttempt <= opts.retries && opts.shouldRetryFn(response)) {
-      retryAfterDelay(opts.currentRetryAttempt);
+    if (currentRetryAttempt <= opts.retries && opts.shouldRetryFn(response)) {
+      retryAfterDelay(currentRetryAttempt);
       return;
     }
 
