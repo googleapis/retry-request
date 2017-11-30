@@ -216,7 +216,7 @@ describe('retry-request', function () {
       };
 
       retryRequest(URI_404, opts, function (err) {
-        assert.deepEqual(numAttempts, 2);
+        assert.strictEqual(numAttempts, 2);
         done();
       });
     });
