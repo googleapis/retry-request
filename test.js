@@ -120,7 +120,7 @@ describe('retry-request', function () {
         .on('error', done);
     });
 
-    it.only('forwards a request error', function (done) {
+    it('forwards a request error', function (done) {
       var error = new Error('Error.');
 
       var opts = {
@@ -192,7 +192,7 @@ describe('retry-request', function () {
 
       var opts = {
         noResponseRetries: 0,
-        request: function (opts, callback) {
+        request: function (_, callback) {
           numAttempts++;
           callback(error);
         }
@@ -201,6 +201,22 @@ describe('retry-request', function () {
       retryRequest(URI_NON_EXISTENT, opts, function (err) {
         assert.strictEqual(numAttempts, 1);
         assert.strictEqual(err, error);
+        done();
+      });
+    });
+
+    it('should allow overriding currentRetryAttempt', function (done) {
+      var numAttempts = 0;
+      var opts = {
+        currentRetryAttempt: 1,
+        request: function (_, responseHandler) {
+          numAttempts++;
+          responseHandler(null, { statusCode: 500 });
+        }
+      };
+
+      retryRequest(URI_404, opts, function (err) {
+        assert.strictEqual(numAttempts, 2);
         done();
       });
     });

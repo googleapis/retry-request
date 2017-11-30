@@ -8,6 +8,7 @@ var DEFAULTS = {
   request: request,
   retries: 2,
   noResponseRetries: 2,
+  currentRetryAttempt: 0,
   shouldRetryFn: function (response) {
     var retryRanges = [
       // https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -52,11 +53,15 @@ function retryRequest(requestOpts, opts, callback) {
   if (typeof opts.retries !== 'number') {
     opts.retries = DEFAULTS.retries;
   }
+  if (typeof opts.currentRetryAttempt !== 'number') {
+    opts.currentRetryAttempt = DEFAULTS.currentRetryAttempt;
+  }
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
 
-  var numAttempts = 0;
+  var currentRetryAttempt = opts.currentRetryAttempt;
+
   var numNoResponseAttempts = 0;
   var streamResponseHandled = false;
 
@@ -102,7 +107,7 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function makeRequest() {
-    numAttempts++;
+    currentRetryAttempt++;
 
     if (streamMode) {
       streamResponseHandled = false;
@@ -138,12 +143,12 @@ function retryRequest(requestOpts, opts, callback) {
     }
   }
 
-  function retryAfterDelay(numAttempts) {
+  function retryAfterDelay(currentRetryAttempt) {
     if (streamMode) {
       resetStreams();
     }
 
-    setTimeout(makeRequest, getNextRetryDelay(numAttempts));
+    setTimeout(makeRequest, getNextRetryDelay(currentRetryAttempt));
   }
 
   function onResponse(err, response, body) {
@@ -166,8 +171,8 @@ function retryRequest(requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (numAttempts <= opts.retries && opts.shouldRetryFn(response)) {
-      retryAfterDelay(numAttempts);
+    if (currentRetryAttempt <= opts.retries && opts.shouldRetryFn(response)) {
+      retryAfterDelay(currentRetryAttempt);
       return;
     }
 
