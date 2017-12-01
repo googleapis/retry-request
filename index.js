@@ -115,7 +115,7 @@ function retryRequest(requestOpts, opts, callback) {
       delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
-      setImmediate(function() {
+      setImmediate(function () {
         retryStream.emit('request');
       });
 
