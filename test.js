@@ -39,7 +39,45 @@ describe('retry-request', function () {
         });
     });
 
-    it('exposes an `abort` fuction to match request', function (done) {
+    it('emits a `request` event on each request', function (done) {
+      var requestsMade = 0;
+      var requestsEmitted = 0;
+
+      var opts = {
+        shouldRetryFn: function() {
+          return requestsMade < 3;
+        },
+        request: function () {
+          var fakeRequestStream = through();
+
+          requestsMade++;
+
+          setImmediate(function () {
+            fakeRequestStream.emit('response', { statusCode: 200 });
+
+            if (requestsMade === 3) {
+              setImmediate(function () {
+                fakeRequestStream.emit('complete');
+              });
+            }
+          });
+
+          return fakeRequestStream;
+        }
+      };
+
+      retryRequest(URI_404, opts)
+        .on('request', function() {
+          requestsEmitted++;
+        })
+        .on('error', done)
+        .on('complete', function () {
+          assert.strictEqual(requestsEmitted, 3);
+          done();
+        });
+    });
+
+    it('exposes an `abort` function to match request', function (done) {
       var retryStream = retryRequest(URI_NON_EXISTENT);
 
       retryStream.on('error', function () {
