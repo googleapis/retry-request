@@ -41,11 +41,11 @@ describe('retry-request', function () {
 
     it('emits a `request` event on each request', function (done) {
       var requestsMade = 0;
-      var requestsEmitted = 0
+      var requestsEmitted = 0;
 
       var opts = {
         shouldRetryFn: function() {
-          return requestsMade < 3
+          return requestsMade < 3;
         },
         request: function () {
           var fakeRequestStream = through();
@@ -54,12 +54,12 @@ describe('retry-request', function () {
 
           setImmediate(function () {
             fakeRequestStream.emit('response', { statusCode: 200 });
+
             if (requestsMade === 3) {
               setImmediate(function () {
                 fakeRequestStream.emit('complete');
               });
             }
-
           });
 
           return fakeRequestStream;
