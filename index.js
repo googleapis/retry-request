@@ -115,6 +115,10 @@ function retryRequest(requestOpts, opts, callback) {
       delayStream = through({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
+      setImmediate(function() {
+        retryStream.emit('request');
+      });
+
       requestStream
         // gRPC via google-cloud-node can emit an `error` as well as a `response`
         // Whichever it emits, we run with-- we can't run with both. That's what
