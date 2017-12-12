@@ -375,6 +375,23 @@ describe('retry-request', function () {
       done();
     });
   });
+
+  it('has an initial delay when currentRetryAttempt > 0', function (done) {
+    var startTime = new Date();
+
+    var opts = {
+      currentRetryAttempt: 1,
+      request: function (_, responseHandler) {
+        responseHandler(null, { statusCode: 200 });
+      }
+    };
+
+    retryRequest(URI_200, opts, function () {
+      var totalTime = new Date() - startTime;
+      assert(totalTime >= 2000 && totalTime < 3000);
+      done();
+    });
+  });
 });
 
 describe('getNextRetryDelay', function () {

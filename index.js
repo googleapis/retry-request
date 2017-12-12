@@ -83,7 +83,11 @@ function retryRequest(requestOpts, opts, callback) {
     retryStream.abort = resetStreams;
   }
 
-  makeRequest();
+  if (currentRetryAttempt > 0) {
+    retryAfterDelay(currentRetryAttempt);
+  } else {
+    makeRequest();
+  }
 
   if (streamMode) {
     return retryStream;
