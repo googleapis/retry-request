@@ -1,0 +1,33 @@
+version: 2
+
+install_and_test: &install_and_test
+  steps:
+    - checkout
+    - run:
+        name: Install
+        command: npm install
+    - run:
+        name: Test
+        command: npm test
+
+jobs:
+  test_node4:
+    docker:
+      - image: node:4
+    <<: *install_and_test
+  test_node6:
+    docker:
+      - image: node:6
+    <<: *install_and_test
+  test_node8:
+    docker:
+      - image: node:8
+    <<: *install_and_test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test_node4
+      - test_node6
+      - test_node8
