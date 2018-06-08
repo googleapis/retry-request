@@ -224,6 +224,24 @@ describe('retry-request', function () {
       });
     });
 
+    it('should use default noResponseRetries', function (done) {
+      var numAttempts = 0;
+      var error = new Error('ENOTFOUND');
+
+      var opts = {
+        request: function (_, callback) {
+          numAttempts++;
+          callback(error);
+        }
+      };
+
+      retryRequest(URI_NON_EXISTENT, opts, function (err) {
+        assert.strictEqual(numAttempts, 3);
+        assert.strictEqual(err, error);
+        done();
+      });
+    });
+
     it('should allow overriding noResponseRetries', function (done) {
       var numAttempts = 0;
       var error = new Error('ENOTFOUND');

@@ -56,6 +56,9 @@ function retryRequest(requestOpts, opts, callback) {
   if (typeof opts.currentRetryAttempt !== 'number') {
     opts.currentRetryAttempt = DEFAULTS.currentRetryAttempt;
   }
+  if (typeof opts.noResponseRetries !== 'number') {
+    opts.noResponseRetries = DEFAULTS.noResponseRetries;
+  }
   if (typeof opts.shouldRetryFn !== 'function') {
     opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
