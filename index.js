@@ -1,11 +1,9 @@
 'use strict';
 
-var request = require('request');
 var through = require('through2');
 
 var DEFAULTS = {
   objectMode: false,
-  request: request,
   retries: 2,
   noResponseRetries: 2,
   currentRetryAttempt: 0,
@@ -48,7 +46,11 @@ function retryRequest(requestOpts, opts, callback) {
     opts.objectMode = DEFAULTS.objectMode;
   }
   if (typeof opts.request === 'undefined') {
-    opts.request = DEFAULTS.request;
+    try {
+      opts.request = require('request');
+    } catch (e) {
+      throw new Error('A request library must be provided to retry-request.');
+    }
   }
   if (typeof opts.retries !== 'number') {
     opts.retries = DEFAULTS.retries;

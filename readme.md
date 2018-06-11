@@ -3,15 +3,30 @@
 |Retry a [request][request] with built-in [exponential backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/coreErrors#backoff).
 
 ```sh
+$ npm install --save request
 $ npm install --save retry-request
 ```
 ```js
-var request = require('retry-request');
+var request = require('retry-request', {
+  request: require('request')
+});
 ```
 
 It should work the same as `request` in both callback mode and stream mode.
 
 Note: This module only works when used as a readable stream, i.e. POST requests aren't supported  ([#3](https://github.com/stephenplusplus/retry-request/issues/3)).
+
+## Do I need to install `request`?
+
+Yes! You must independently install `request` and provide it to this library:
+
+```js
+var request = require('retry-request', {
+  request: require('request')
+});
+```
+
+*The code will actually look for the `request` module automatically to save you this step. But, being explicit like in the example is also welcome.*
 
 #### Callback
 
@@ -125,7 +140,9 @@ request(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
 
 Type: `Function`
 
-Default: [`request`][request]
+Default: `try { require('request') }`
+
+If we cannot locate `request`, we will throw an error advising you to provide it explicitly.
 
 *NOTE: If you override the request function, and it returns a stream in object mode, be sure to set `opts.objectMode` to `true`.*
 
