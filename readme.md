@@ -167,3 +167,10 @@ request(urlThatReturns503, opts, function (err, resp, body) {
 Passed directly to `request`. See the callback section: https://github.com/request/request/#requestoptions-callback.
 
 [request]: https://github.com/request/request
+
+## How to debug?
+This project is using [debug](https://www.npmjs.com/package/debug) npm module. It is able to turn on debug mode by setting environment variable DEBUG as _retry-request_.
+```
+DEBUG='retry-request'
+```
+It is able to get retry attempt, response status, next retry delay information in debug mode.

@@ -1,6 +1,7 @@
 'use strict';
 
 var through = require('through2');
+var debug = require('debug')('retry-request');
 
 var DEFAULTS = {
   objectMode: false,
@@ -22,7 +23,7 @@ var DEFAULTS = {
     ];
 
     var statusCode = response.statusCode;
-
+    debug(`Response status: ${statusCode}`)
     var range;
     while ((range = retryRanges.shift())) {
       if (statusCode >= range[0] && statusCode <= range[1]) {
@@ -117,7 +118,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   function makeRequest() {
     currentRetryAttempt++;
-
+    debug(`Current retry attempt: ${currentRetryAttempt}`);
     if (streamMode) {
       streamResponseHandled = false;
 
@@ -160,8 +161,9 @@ function retryRequest(requestOpts, opts, callback) {
     if (streamMode) {
       resetStreams();
     }
-
-    setTimeout(makeRequest, getNextRetryDelay(currentRetryAttempt));
+    let nextRetryDelay = getNextRetryDelay(currentRetryAttempt);
+    debug(`Next retry delay: ${nextRetryDelay}`);
+    setTimeout(makeRequest, nextRetryDelay);
   }
 
   function onResponse(err, response, body) {
