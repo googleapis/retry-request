@@ -1,4 +1,4 @@
-version: 2
+version: 3
 
 install_and_test: &install_and_test
   steps:
@@ -11,10 +11,6 @@ install_and_test: &install_and_test
         command: npm test
 
 jobs:
-  test_node4:
-    docker:
-      - image: node:4
-    <<: *install_and_test
   test_node6:
     docker:
       - image: node:6
@@ -25,9 +21,8 @@ jobs:
     <<: *install_and_test
 
 workflows:
-  version: 2
+  version: 3
   test:
     jobs:
-      - test_node4
       - test_node6
       - test_node8
