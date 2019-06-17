@@ -1,4 +1,4 @@
-version: 2
+version: 3
 
 install_and_test: &install_and_test
   steps:
@@ -25,7 +25,7 @@ jobs:
     <<: *install_and_test
 
 workflows:
-  version: 2
+  version: 3
   test:
     jobs:
       - test_node8
