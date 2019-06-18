@@ -47,6 +47,12 @@ request(urlThatReturns503)
   .on('complete', function () {});
 ```
 
+## Can I monitor what retry-request is doing internally?
+
+Yes! This project uses [debug](https://www.npmjs.com/package/debug) to provide the current retry attempt, each response status, and the delay computed until the next retry attempt is made. To enable the debug mode, set the environment variable `DEBUG` to *retry-request*.
+
+(Thanks for the implementation, @yihaozhadan!)
+
 ## request(requestOptions, [opts], [cb])
 
 ### requestOptions
