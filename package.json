@@ -24,10 +24,10 @@
     "node": ">=8.10.0"
   },
   "dependencies": {
-    "through2": "^2.0.0"
+    "through2": "^3.0.1"
   },
   "devDependencies": {
-    "async": "^2.5.0",
+    "async": "^3.0.1",
     "lodash.range": "^3.2.0",
     "mocha": "^6.1.4",
     "request": "^2.87.0"
