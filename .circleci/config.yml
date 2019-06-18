@@ -11,18 +11,23 @@ install_and_test: &install_and_test
         command: npm test
 
 jobs:
-  test_node6:
-    docker:
-      - image: node:6
-    <<: *install_and_test
   test_node8:
     docker:
       - image: node:8
+    <<: *install_and_test
+  test_node10:
+    docker:
+      - image: node:10
+    <<: *install_and_test
+  test_node11:
+    docker:
+      - image: node:11
     <<: *install_and_test
 
 workflows:
   version: 3
   test:
     jobs:
-      - test_node6
       - test_node8
+      - test_node10
+      - test_node11
