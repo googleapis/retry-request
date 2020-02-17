@@ -151,7 +151,14 @@ function retryRequest(requestOpts, opts, callback) {
           streamResponseHandled = true;
           onResponse(null, resp, body);
         })
-        .on('complete', retryStream.emit.bind(retryStream, 'complete'));
+        .on('complete', retryStream.emit.bind(retryStream, 'complete'))
+        .on('end', function () {
+          if (streamMode) {
+            retryStream.emit('end');
+          } else {
+            callback();
+          }
+        });
 
       requestStream.pipe(delayStream);
     } else {

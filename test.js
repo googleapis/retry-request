@@ -185,6 +185,21 @@ describe('retry-request', function () {
           done();
         });
     });
+
+    it('emits an `end` event', function (done) {
+      var opts = {
+        request: function () {
+          var fakeRequestStream = through();
+          setImmediate(function () {
+            fakeRequestStream.emit('end');
+          })
+          return fakeRequestStream;
+        }
+      };
+      retryRequest(URI_200, opts)
+        .on('request', function () { })
+        .on('end', done);
+    });
   });
 
   describe('callbacks', function () {
