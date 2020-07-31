@@ -57,9 +57,12 @@ function retryRequest(requestOpts, opts, callback) {
   if (typeof opts.retries !== 'number') {
     opts.retries = DEFAULTS.retries;
   }
-  if (typeof opts.currentRetryAttempt !== 'number') {
+
+  var manualCurrentRetryAttemptWasSet = typeof opts.currentRetryAttempt === 'number';
+  if (!manualCurrentRetryAttemptWasSet) {
     opts.currentRetryAttempt = DEFAULTS.currentRetryAttempt;
   }
+
   if (typeof opts.noResponseRetries !== 'number') {
     opts.noResponseRetries = DEFAULTS.noResponseRetries;
   }
@@ -190,7 +193,12 @@ function retryRequest(requestOpts, opts, callback) {
     }
 
     // Send the response to see if we should try again.
-    if (currentRetryAttempt <= opts.retries && opts.shouldRetryFn(response)) {
+    // NOTE: "currentRetryAttempt" isn't accurate by default, as it counts
+    // the very first request sent as the first "retry". It is only accurate
+    // when a user provides their own "currentRetryAttempt" option at
+    // instantiation.
+    var adjustedCurrentRetryAttempt = manualCurrentRetryAttemptWasSet ? currentRetryAttempt : currentRetryAttempt - 1;
+    if (adjustedCurrentRetryAttempt < opts.retries && opts.shouldRetryFn(response)) {
       retryAfterDelay(currentRetryAttempt);
       return;
     }
