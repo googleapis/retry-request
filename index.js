@@ -1,6 +1,6 @@
 'use strict';
 
-var through = require('through2');
+var { PassThrough } = require('stream');
 var debug = require('debug')('retry-request');
 
 var DEFAULTS = {
@@ -89,7 +89,7 @@ function retryRequest(requestOpts, opts, callback) {
   };
 
   if (streamMode) {
-    retryStream = through({ objectMode: opts.objectMode });
+    retryStream = new PassThrough({ objectMode: opts.objectMode });
     retryStream.abort = resetStreams;
   }
 
@@ -127,7 +127,7 @@ function retryRequest(requestOpts, opts, callback) {
     if (streamMode) {
       streamResponseHandled = false;
 
-      delayStream = through({ objectMode: opts.objectMode });
+      delayStream = new PassThrough({ objectMode: opts.objectMode });
       requestStream = opts.request(requestOpts);
 
       setImmediate(function () {

@@ -24,8 +24,7 @@
     "node": ">=8.10.0"
   },
   "dependencies": {
-    "debug": "^4.1.1",
-    "through2": "^3.0.1"
+    "debug": "^4.1.1"
   },
   "devDependencies": {
     "async": "^3.0.1",

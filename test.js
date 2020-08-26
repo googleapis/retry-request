@@ -3,7 +3,7 @@
 var assert = require('assert');
 var async = require('async');
 var range = require('lodash.range');
-var through = require('through2');
+var { PassThrough } = require('stream');
 
 var retryRequest = require('./index.js');
 
@@ -48,7 +48,7 @@ describe('retry-request', function () {
           return requestsMade < 3;
         },
         request: function () {
-          var fakeRequestStream = through();
+          var fakeRequestStream = new PassThrough();
 
           requestsMade++;
 
@@ -94,7 +94,7 @@ describe('retry-request', function () {
         request: function () {
           numAttempts++;
 
-          var fakeRequestStream = through();
+          var fakeRequestStream = new PassThrough();
           fakeRequestStream.abort = function () {
             numAborts++;
           };
@@ -135,7 +135,7 @@ describe('retry-request', function () {
         request: function () {
           numAttempts++;
 
-          var fakeRequestStream = through();
+          var fakeRequestStream = new PassThrough();
           fakeRequestStream.abort = function () {
             numAborts++;
           };
@@ -163,7 +163,7 @@ describe('retry-request', function () {
 
       var opts = {
         request: function () {
-          var fakeRequestStream = through();
+          var fakeRequestStream = new PassThrough();
 
           setImmediate(function () {
             fakeRequestStream.emit('response', {
