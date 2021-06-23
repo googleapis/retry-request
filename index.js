@@ -127,7 +127,7 @@ function retryRequest(requestOpts, opts, callback) {
     }
   }
 
-  function makeRequest() {    
+  function makeRequest() {
     currentRetryAttempt++;
     debug(`Current retry attempt: ${currentRetryAttempt}`);
 
