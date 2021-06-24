@@ -6,6 +6,29 @@ var debug = require('debug')('retry-request');
 var DEFAULTS = {
   objectMode: false,
   retries: 2,
+
+  /*
+    The maximum time to delay in seconds. If retryDelayMultiplier results in a
+    delay greater than maxRetryDelay, retries should delay by maxRetryDelay
+    seconds instead.
+  */
+  maxRetryDelay: 64, 
+
+  /*
+    The multiplier by which to increase the delay time between the completion of
+    failed requests, and the initiation of the subsequent retrying request.
+  */
+  retryDelayMultiplier: 2,
+
+  /*
+    The length of time to keep retrying in seconds. The last sleep period will
+    be shortened as necessary, so that the last retry runs at deadline (and not
+    considerably beyond it).  The total time starting from when the initial
+    request is sent, after which an error will be returned, regardless of the
+    retrying attempts made meanwhile.
+   */
+  totalTimeout: 600,
+
   noResponseRetries: 2,
   currentRetryAttempt: 0,
   shouldRetryFn: function (response) {
@@ -42,32 +65,15 @@ function retryRequest(requestOpts, opts, callback) {
     callback = opts;
   }
 
-  opts = opts || DEFAULTS;
+  var manualCurrentRetryAttemptWasSet = opts && typeof opts.currentRetryAttempt === 'number';
+  opts = Object.assign({}, DEFAULTS, opts);
 
-  if (typeof opts.objectMode === 'undefined') {
-    opts.objectMode = DEFAULTS.objectMode;
-  }
   if (typeof opts.request === 'undefined') {
     try {
       opts.request = require('request');
     } catch (e) {
       throw new Error('A request library must be provided to retry-request.');
     }
-  }
-  if (typeof opts.retries !== 'number') {
-    opts.retries = DEFAULTS.retries;
-  }
-
-  var manualCurrentRetryAttemptWasSet = typeof opts.currentRetryAttempt === 'number';
-  if (!manualCurrentRetryAttemptWasSet) {
-    opts.currentRetryAttempt = DEFAULTS.currentRetryAttempt;
-  }
-
-  if (typeof opts.noResponseRetries !== 'number') {
-    opts.noResponseRetries = DEFAULTS.noResponseRetries;
-  }
-  if (typeof opts.shouldRetryFn !== 'function') {
-    opts.shouldRetryFn = DEFAULTS.shouldRetryFn;
   }
 
   var currentRetryAttempt = opts.currentRetryAttempt;
@@ -93,6 +99,7 @@ function retryRequest(requestOpts, opts, callback) {
     retryStream.abort = resetStreams;
   }
 
+  var timeOfFirstRequest = Date.now();
   if (currentRetryAttempt > 0) {
     retryAfterDelay(currentRetryAttempt);
   } else {
@@ -167,7 +174,13 @@ function retryRequest(requestOpts, opts, callback) {
       resetStreams();
     }
 
-    var nextRetryDelay = getNextRetryDelay(currentRetryAttempt);
+    var nextRetryDelay = getNextRetryDelay({
+      maxRetryDelay: opts.maxRetryDelay,
+      retryDelayMultiplier: opts.retryDelayMultiplier,
+      retryNumber: currentRetryAttempt,
+      timeOfFirstRequest,
+      totalTimeout: opts.totalTimeout,
+    });
     debug(`Next retry delay: ${nextRetryDelay}`);
 
     setTimeout(makeRequest, nextRetryDelay);
@@ -218,8 +231,24 @@ function retryRequest(requestOpts, opts, callback) {
 
 module.exports = retryRequest;
 
-function getNextRetryDelay(retryNumber) {
-  return (Math.pow(2, retryNumber) * 1000) + Math.floor(Math.random() * 1000);
+function getNextRetryDelay(config) {
+  var {
+    maxRetryDelay,
+    retryDelayMultiplier,
+    retryNumber,
+    timeOfFirstRequest,
+    totalTimeout,
+  } = config;
+
+  var maxRetryDelayMs = maxRetryDelay * 1000;
+  var totalTimeoutMs = totalTimeout * 1000;
+
+  var jitter = Math.floor(Math.random() * 1000);
+  var calculatedNextRetryDelay = Math.pow(retryDelayMultiplier, retryNumber) * 1000 + jitter;
+
+  var maxAllowableDelayMs = totalTimeoutMs - (Date.now() - timeOfFirstRequest);
+
+  return Math.min(calculatedNextRetryDelay, maxAllowableDelayMs, maxRetryDelayMs);
 }
 
 module.exports.getNextRetryDelay = getNextRetryDelay;

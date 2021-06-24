@@ -413,20 +413,104 @@ describe('retry-request', function () {
 });
 
 describe('getNextRetryDelay', function () {
-  function secs(seconds) {
+  var maxRetryDelay = 64;
+  var retryDelayMultiplier = 2;
+  var timeOfFirstRequest;
+  var totalTimeout = 64;
+
+  function secondsToMs(seconds) {
     return seconds * 1000;
   }
+
+  beforeEach(() => {
+    timeOfFirstRequest = Date.now();
+  });
 
   it('should return exponential retry delay', function () {
     [1, 2, 3, 4, 5].forEach(assertTime);
 
     function assertTime(retryNumber) {
-      var min = (Math.pow(2, retryNumber) * secs(1));
-      var max = (Math.pow(2, retryNumber) * secs(1)) + secs(1);
+      var min = (Math.pow(2, retryNumber) * secondsToMs(1));
+      var max = (Math.pow(2, retryNumber) * secondsToMs(1)) + secondsToMs(1);
 
-      var time = retryRequest.getNextRetryDelay(retryNumber);
+      var delay = retryRequest.getNextRetryDelay({
+        maxRetryDelay,
+        retryDelayMultiplier,
+        retryNumber,
+        timeOfFirstRequest,
+        totalTimeout,
+      });
 
-      assert(time >= min && time <= max);
+      assert(delay >= min && delay <= max);
     }
+  });
+
+  it('should allow overriding the multiplier', function () {
+    [1, 2, 3, 4, 5].forEach(assertTime);
+
+    function assertTime(multiplier) {
+      var min = (Math.pow(multiplier, 1) * secondsToMs(1));
+      var max = (Math.pow(multiplier, 1) * secondsToMs(1)) + secondsToMs(1);
+
+      var delay = retryRequest.getNextRetryDelay({
+        maxRetryDelay,
+        retryDelayMultiplier: multiplier,
+        retryNumber: 1,
+        timeOfFirstRequest,
+        totalTimeout,
+      });
+
+      assert(delay >= min && delay <= max);
+    }
+  });
+
+  it('should honor total timeout setting', function () {
+    // This test passes settings to calculate an enormous retry delay, if it
+    // weren't for the timeout restrictions imposed by `totalTimeout`.
+    // So, even though this is pretending to be the 10th retry, and our
+    // `maxRetryDelay` is huge, the 60 second max timeout we have for all
+    // requests to complete by is honored.
+    // We tell the function that we have already been trying this request for
+    // 30 seconds, and we will only wait a maximum of 60 seconds. Therefore, we
+    // should end up with a retry delay of around 30 seconds.
+    var retryDelay = retryRequest.getNextRetryDelay({
+      // Allow 60 seconds maximum delay, 
+      timeOfFirstRequest: Date.now() - secondsToMs(30), // 30 seconds ago.
+      totalTimeout: 60,
+
+      // Inflating these numbers to be sure the smaller timeout is chosen:
+      maxRetryDelay: 1e9,
+      retryDelayMultiplier: 10,
+      retryNumber: 10,
+    });
+
+    var min = retryDelay - 10;
+    var max = retryDelay + 10;
+    assert(retryDelay >= min && retryDelay <= max);
+  });
+
+  it('should return maxRetryDelay if calculated retry would be too high', function () {
+    var delayWithoutLowMaxRetryDelay = retryRequest.getNextRetryDelay({
+      maxRetryDelay,
+      retryDelayMultiplier,
+      retryNumber: 100,
+      timeOfFirstRequest,
+      totalTimeout,
+    });
+
+    var maxRetryDelayMs = secondsToMs(maxRetryDelay);
+    var min = maxRetryDelayMs - 10;
+    var max = maxRetryDelayMs + 10;
+    assert(delayWithoutLowMaxRetryDelay >= min && delayWithoutLowMaxRetryDelay <= max);
+
+    var lowMaxRetryDelay = 1;
+    var delayWithLowMaxRetryDelay = retryRequest.getNextRetryDelay({
+      maxRetryDelay: lowMaxRetryDelay,
+      retryDelayMultiplier,
+      retryNumber: 100,
+      timeOfFirstRequest,
+      totalTimeout,
+    });
+    assert.strictEqual(delayWithLowMaxRetryDelay, secondsToMs(lowMaxRetryDelay));
   });
 });

@@ -168,6 +168,30 @@ request(urlThatReturns503, opts, function (err, resp, body) {
 });
 ```
 
+#### `opts.maxRetryDelay`
+
+Type: `Number`
+
+Default: `64`
+
+The maximum time to delay in seconds. If retryDelayMultiplier results in a delay greater than maxRetryDelay, retries should delay by maxRetryDelay seconds instead.
+
+#### `opts.retryDelayMultiplier`
+
+Type: `Number`
+
+Default: `2`
+
+The multiplier by which to increase the delay time between the completion of failed requests, and the initiation of the subsequent retrying request.
+
+#### `opts.totalTimeout`
+
+Type: `Number`
+
+Default: `600`
+
+The length of time to keep retrying in seconds. The last sleep period will be shortened as necessary, so that the last retry runs at deadline (and not considerably beyond it).  The total time starting from when the initial request is sent, after which an error will be returned, regardless of the retrying attempts made meanwhile.
+
 ### cb *(optional)*
 
 Passed directly to `request`. See the callback section: https://github.com/request/request/#requestoptions-callback.
