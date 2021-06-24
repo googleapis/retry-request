@@ -8,9 +8,9 @@ var DEFAULTS = {
   retries: 2,
 
   /*
-  The maximum time to delay in seconds. If retryDelayMultiplier results in a
-  delay greater than maxRetryDelay, retries should delay by maxRetryDelay
-  seconds instead.
+    The maximum time to delay in seconds. If retryDelayMultiplier results in a
+    delay greater than maxRetryDelay, retries should delay by maxRetryDelay
+    seconds instead.
   */
   maxRetryDelay: 64, 
 
