@@ -9,6 +9,9 @@ declare module 'retry-request' {
       retries?: number,
       noResponseRetries?: number,
       currentRetryAttempt?: number,
+      maxRetryDelay?: number,
+      retryDelayMultiplier?: number,
+      totalTimeout?: number,
       shouldRetryFn?: (response: request.RequestResponse) => boolean
     }
   }
