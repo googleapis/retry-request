@@ -216,6 +216,25 @@ describe('retry-request', function () {
   });
 
   describe('overriding', function () {
+    it('should ignore undefined options', function (done) {
+      var numAttempts = 0;
+      var error = new Error('ENOTFOUND');
+
+      var opts = {
+        noResponseRetries: undefined,
+        request: function (_, callback) {
+          numAttempts++;
+          callback(error);
+        }
+      };
+
+      retryRequest(URI_NON_EXISTENT, opts, function (err) {
+        assert.strictEqual(numAttempts, 3);
+        assert.strictEqual(err, error);
+        done();
+      });
+    });
+
     it('should allow overriding retries', function (done) {
       var opts = { retries: 0 };
 
