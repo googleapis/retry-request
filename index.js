@@ -2,6 +2,7 @@
 
 var { PassThrough } = require('stream');
 var debug = require('debug')('retry-request');
+var extend = require('extend');
 
 var DEFAULTS = {
   objectMode: false,
@@ -66,7 +67,7 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   var manualCurrentRetryAttemptWasSet = opts && typeof opts.currentRetryAttempt === 'number';
-  opts = Object.assign({}, DEFAULTS, opts);
+  opts = extend({}, DEFAULTS, opts);
 
   if (typeof opts.request === 'undefined') {
     try {
