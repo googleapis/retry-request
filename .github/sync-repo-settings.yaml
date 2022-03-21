@@ -5,6 +5,7 @@ branchProtectionRules:
 - pattern: main
   isAdminEnforced: true
   requiredStatusCheckContexts:
+    - 'lint'
     - 'test (10)'
     - 'test (12)'
     - 'test (14)'
