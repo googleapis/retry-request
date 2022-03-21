@@ -1,10 +1,10 @@
 'use strict';
 
-var { PassThrough } = require('stream');
-var debug = require('debug')('retry-request');
-var extend = require('extend');
+const {PassThrough} = require('stream');
+const debug = require('debug')('retry-request');
+const extend = require('extend');
 
-var DEFAULTS = {
+const DEFAULTS = {
   objectMode: false,
   retries: 2,
 
@@ -13,7 +13,7 @@ var DEFAULTS = {
     delay greater than maxRetryDelay, retries should delay by maxRetryDelay
     seconds instead.
   */
-  maxRetryDelay: 64, 
+  maxRetryDelay: 64,
 
   /*
     The multiplier by which to increase the delay time between the completion of
@@ -33,7 +33,7 @@ var DEFAULTS = {
   noResponseRetries: 2,
   currentRetryAttempt: 0,
   shouldRetryFn: function (response) {
-    var retryRanges = [
+    const retryRanges = [
       // https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
       // 1xx - Retry (Informational, request still processing)
       // 2xx - Do not retry (Success)
@@ -43,30 +43,31 @@ var DEFAULTS = {
       // 5xx - Retry (Server errors)
       [100, 199],
       [429, 429],
-      [500, 599]
+      [500, 599],
     ];
 
-    var statusCode = response.statusCode;
+    const statusCode = response.statusCode;
     debug(`Response status: ${statusCode}`);
 
-    var range;
+    let range;
     while ((range = retryRanges.shift())) {
       if (statusCode >= range[0] && statusCode <= range[1]) {
         // Not a successful status or redirect.
         return true;
       }
     }
-  }
+  },
 };
 
 function retryRequest(requestOpts, opts, callback) {
-  var streamMode = typeof arguments[arguments.length - 1] !== 'function';
+  const streamMode = typeof arguments[arguments.length - 1] !== 'function';
 
   if (typeof opts === 'function') {
     callback = opts;
   }
 
-  var manualCurrentRetryAttemptWasSet = opts && typeof opts.currentRetryAttempt === 'number';
+  const manualCurrentRetryAttemptWasSet =
+    opts && typeof opts.currentRetryAttempt === 'number';
   opts = extend({}, DEFAULTS, opts);
 
   if (typeof opts.request === 'undefined') {
@@ -77,30 +78,30 @@ function retryRequest(requestOpts, opts, callback) {
     }
   }
 
-  var currentRetryAttempt = opts.currentRetryAttempt;
+  let currentRetryAttempt = opts.currentRetryAttempt;
 
-  var numNoResponseAttempts = 0;
-  var streamResponseHandled = false;
+  let numNoResponseAttempts = 0;
+  let streamResponseHandled = false;
 
-  var retryStream;
-  var requestStream;
-  var delayStream;
+  let retryStream;
+  let requestStream;
+  let delayStream;
 
-  var activeRequest;
-  var retryRequest = {
+  let activeRequest;
+  const retryRequest = {
     abort: function () {
       if (activeRequest && activeRequest.abort) {
         activeRequest.abort();
       }
-    }
+    },
   };
 
   if (streamMode) {
-    retryStream = new PassThrough({ objectMode: opts.objectMode });
+    retryStream = new PassThrough({objectMode: opts.objectMode});
     retryStream.abort = resetStreams;
   }
 
-  var timeOfFirstRequest = Date.now();
+  const timeOfFirstRequest = Date.now();
   if (currentRetryAttempt > 0) {
     retryAfterDelay(currentRetryAttempt);
   } else {
@@ -135,10 +136,10 @@ function retryRequest(requestOpts, opts, callback) {
     if (streamMode) {
       streamResponseHandled = false;
 
-      delayStream = new PassThrough({ objectMode: opts.objectMode });
+      delayStream = new PassThrough({objectMode: opts.objectMode});
       requestStream = opts.request(requestOpts);
 
-      setImmediate(function () {
+      setImmediate(() => {
         retryStream.emit('request');
       });
 
@@ -146,7 +147,7 @@ function retryRequest(requestOpts, opts, callback) {
         // gRPC via google-cloud-node can emit an `error` as well as a `response`
         // Whichever it emits, we run with-- we can't run with both. That's what
         // is up with the `streamResponseHandled` tracking.
-        .on('error', function (err) {
+        .on('error', err => {
           if (streamResponseHandled) {
             return;
           }
@@ -154,7 +155,7 @@ function retryRequest(requestOpts, opts, callback) {
           streamResponseHandled = true;
           onResponse(err);
         })
-        .on('response', function (resp, body) {
+        .on('response', (resp, body) => {
           if (streamResponseHandled) {
             return;
           }
@@ -175,7 +176,7 @@ function retryRequest(requestOpts, opts, callback) {
       resetStreams();
     }
 
-    var nextRetryDelay = getNextRetryDelay({
+    const nextRetryDelay = getNextRetryDelay({
       maxRetryDelay: opts.maxRetryDelay,
       retryDelayMultiplier: opts.retryDelayMultiplier,
       retryNumber: currentRetryAttempt,
@@ -211,8 +212,13 @@ function retryRequest(requestOpts, opts, callback) {
     // the very first request sent as the first "retry". It is only accurate
     // when a user provides their own "currentRetryAttempt" option at
     // instantiation.
-    var adjustedCurrentRetryAttempt = manualCurrentRetryAttemptWasSet ? currentRetryAttempt : currentRetryAttempt - 1;
-    if (adjustedCurrentRetryAttempt < opts.retries && opts.shouldRetryFn(response)) {
+    const adjustedCurrentRetryAttempt = manualCurrentRetryAttemptWasSet
+      ? currentRetryAttempt
+      : currentRetryAttempt - 1;
+    if (
+      adjustedCurrentRetryAttempt < opts.retries &&
+      opts.shouldRetryFn(response)
+    ) {
       retryAfterDelay(currentRetryAttempt);
       return;
     }
@@ -221,7 +227,7 @@ function retryRequest(requestOpts, opts, callback) {
     if (streamMode) {
       retryStream.emit('response', response);
       delayStream.pipe(retryStream);
-      requestStream.on('error', function (err) {
+      requestStream.on('error', err => {
         retryStream.destroy(err);
       });
     } else {
@@ -233,7 +239,7 @@ function retryRequest(requestOpts, opts, callback) {
 module.exports = retryRequest;
 
 function getNextRetryDelay(config) {
-  var {
+  const {
     maxRetryDelay,
     retryDelayMultiplier,
     retryNumber,
@@ -241,15 +247,21 @@ function getNextRetryDelay(config) {
     totalTimeout,
   } = config;
 
-  var maxRetryDelayMs = maxRetryDelay * 1000;
-  var totalTimeoutMs = totalTimeout * 1000;
+  const maxRetryDelayMs = maxRetryDelay * 1000;
+  const totalTimeoutMs = totalTimeout * 1000;
 
-  var jitter = Math.floor(Math.random() * 1000);
-  var calculatedNextRetryDelay = Math.pow(retryDelayMultiplier, retryNumber) * 1000 + jitter;
+  const jitter = Math.floor(Math.random() * 1000);
+  const calculatedNextRetryDelay =
+    Math.pow(retryDelayMultiplier, retryNumber) * 1000 + jitter;
 
-  var maxAllowableDelayMs = totalTimeoutMs - (Date.now() - timeOfFirstRequest);
+  const maxAllowableDelayMs =
+    totalTimeoutMs - (Date.now() - timeOfFirstRequest);
 
-  return Math.min(calculatedNextRetryDelay, maxAllowableDelayMs, maxRetryDelayMs);
+  return Math.min(
+    calculatedNextRetryDelay,
+    maxAllowableDelayMs,
+    maxRetryDelayMs
+  );
 }
 
 module.exports.getNextRetryDelay = getNextRetryDelay;
