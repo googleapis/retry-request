@@ -1,4 +1,5 @@
 declare module 'retry-request' {
+  // eslint-disable-next-line node/no-unpublished-import
   import * as request from 'request';
 
   namespace retryRequest {

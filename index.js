@@ -72,6 +72,7 @@ function retryRequest(requestOpts, opts, callback) {
 
   if (typeof opts.request === 'undefined') {
     try {
+      // eslint-disable-next-line node/no-unpublished-require
       opts.request = require('request');
     } catch (e) {
       throw new Error('A request library must be provided to retry-request.');
