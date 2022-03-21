@@ -5,6 +5,8 @@
   "main": "index.js",
   "repository": "stephenplusplus/retry-request",
   "scripts": {
+    "fix": "gts fix",
+    "lint": "gts check",
     "test": "mocha --timeout 0"
   },
   "files": [
@@ -29,8 +31,10 @@
   },
   "devDependencies": {
     "async": "^3.0.1",
+    "gts": "^3.1.0",
     "lodash.range": "^3.2.0",
     "mocha": "^6.1.4",
-    "request": "^2.87.0"
+    "request": "^2.87.0",
+    "typescript": "^4.6.2"
   }
 }
