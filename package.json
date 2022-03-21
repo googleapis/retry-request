@@ -30,6 +30,7 @@
     "extend": "^3.0.2"
   },
   "devDependencies": {
+    "@types/request": "^2.48.8",
     "async": "^3.0.1",
     "gts": "^3.1.0",
     "lodash.range": "^3.2.0",
