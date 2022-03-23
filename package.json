@@ -5,6 +5,7 @@
   "main": "index.js",
   "repository": "stephenplusplus/retry-request",
   "scripts": {
+    "docs": "jsdoc -c .jsdoc.js",
     "fix": "gts fix",
     "lint": "gts check",
     "test": "mocha --timeout 0"
@@ -33,6 +34,9 @@
     "@types/request": "^2.48.8",
     "async": "^3.0.1",
     "gts": "^3.1.0",
+    "jsdoc": "^3.6.3",
+    "jsdoc-fresh": "^1.0.2",
+    "jsdoc-region-tag": "^1.0.4",
     "lodash.range": "^3.2.0",
     "mocha": "^6.1.4",
     "request": "^2.87.0",
