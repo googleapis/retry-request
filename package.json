@@ -41,7 +41,7 @@
     "jsdoc-region-tag": "^1.0.4",
     "linkinator": "^2.7.3",
     "lodash.range": "^3.2.0",
-    "mocha": "^6.1.4",
+    "mocha": "^9.0.0",
     "request": "^2.87.0",
     "typescript": "^4.6.2"
   }
