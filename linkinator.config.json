@@ -1,7 +1,7 @@
 {
     "recurse": true,
     "skip": [
-      "docs/logo.png"
+      "/logo.png"
     ],
     "silent": true,
     "concurrency": 5,
