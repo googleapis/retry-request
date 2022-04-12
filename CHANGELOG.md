@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.2.2](https://github.com/googleapis/retry-request/compare/v4.2.1...v4.2.2) (2022-04-12)
+
+
+### Bug Fixes
+
+* use extend instead of object.assign ([#37](https://github.com/googleapis/retry-request/issues/37)) ([8c8dcdd](https://github.com/googleapis/retry-request/commit/8c8dcdd7d6262ce305c93fa4a8a7b2630e984824))
+
 ### [4.2.1](https://github.com/googleapis/retry-request/compare/v4.2.0...v4.2.1) (2022-04-12)
 
 
