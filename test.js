@@ -16,14 +16,20 @@ describe('retry-request', () => {
   describe('streams', () => {
     it('works with defaults in a stream', done => {
       let responsesEmitted = 0;
+      let record = 0;
 
       retryRequest(URI_404)
         .on('error', done)
         .on('response', () => {
           responsesEmitted++;
         })
+        .on('data', data => {
+          record++;
+          assert.ok(data);
+        })
         .on('complete', () => {
           assert.strictEqual(responsesEmitted, 1);
+          assert.strictEqual(record, 1);
           done();
         });
     });

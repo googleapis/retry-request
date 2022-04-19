@@ -164,6 +164,14 @@ function retryRequest(requestOpts, opts, callback) {
           streamResponseHandled = true;
           onResponse(null, resp, body);
         })
+        .on('data', data => {
+          if (streamResponseHandled) {
+            return;
+          }
+
+          streamResponseHandled = true;
+          onResponse(null, data);
+        })
         .on('complete', retryStream.emit.bind(retryStream, 'complete'));
 
       requestStream.pipe(delayStream);
