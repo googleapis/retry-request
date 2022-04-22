@@ -10,7 +10,8 @@
     "docs-test": "linkinator docs",
     "fix": "gts fix",
     "lint": "gts check",
-    "test": "mocha --timeout 0"
+    "test": "mocha --timeout 0",
+    "system-test": ""
   },
   "files": [
     "index.js",
