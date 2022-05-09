@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/googleapis/retry-request/compare/v4.2.2...v5.0.0) (2022-05-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop node 10 (#68)
+
+### Build System
+
+* drop node 10 ([#68](https://github.com/googleapis/retry-request/issues/68)) ([00ec90c](https://github.com/googleapis/retry-request/commit/00ec90c4d3cb29245ca746e0e133fcddc22d2251))
+
 ### [4.2.1](https://github.com/googleapis/retry-request/compare/v4.2.0...v4.2.1) (2022-04-12)
 
 
