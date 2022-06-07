@@ -186,6 +186,11 @@ function retryRequest(requestOpts, opts, callback) {
     });
     debug(`Next retry delay: ${nextRetryDelay}`);
 
+    if (nextRetryDelay <= 0) {
+      numNoResponseAttempts = opts.noResponseRetries + 1;
+      return;
+    }
+
     setTimeout(makeRequest, nextRetryDelay);
   }
 
