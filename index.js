@@ -188,9 +188,9 @@ function retryRequest(requestOpts, opts, callback) {
 
     if (nextRetryDelay <= 0) {
       numNoResponseAttempts = opts.noResponseRetries + 1;
-      return
+      return;
     }
-    
+
     setTimeout(makeRequest, nextRetryDelay);
   }
 
