@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/googleapis/retry-request/compare/v5.0.0...v5.0.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* respect totalTimeout and do not retry if nextRetryDelay is <= 0 ([#38](https://github.com/googleapis/retry-request/issues/38)) ([9501a42](https://github.com/googleapis/retry-request/commit/9501a42d06a620282dcd2ff9990fd0b5033a990b))
+
 ## [5.0.0](https://github.com/googleapis/retry-request/compare/v4.2.2...v5.0.0) (2022-05-06)
 
 
