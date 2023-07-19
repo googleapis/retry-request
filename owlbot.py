@@ -13,5 +13,8 @@
 # limitations under the License.
 
 import synthtool.languages.node as node
+import logging
 
-node.owlbot_main(templates_excludes=["README.md", "LICENSE"])
+logging.basicConfig(level=logging.DEBUG)
+
+node.owlbot_main(templates_excludes=["README.md", "LICENSE", ".github/workflows/ci.yaml"])
