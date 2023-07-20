@@ -1,5 +1,22 @@
 # Changelog
 
+## [6.0.0](https://github.com/googleapis/retry-request/compare/v5.0.2...v6.0.0) (2023-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Move to node 14 as the minimum version ([#97](https://github.com/googleapis/retry-request/issues/97))
+* move minimum version to node 14 ([#96](https://github.com/googleapis/retry-request/issues/96))
+
+### Features
+
+* Move to node 14 as the minimum version ([#97](https://github.com/googleapis/retry-request/issues/97)) ([f42d074](https://github.com/googleapis/retry-request/commit/f42d0743de048fdf46c7f480f3dec59c2caefa5a))
+
+
+### Miscellaneous Chores
+
+* Move minimum version to node 14 ([#96](https://github.com/googleapis/retry-request/issues/96)) ([2167a91](https://github.com/googleapis/retry-request/commit/2167a91c36e95522ad7e7293b4744ddd81c6166e))
+
 ## [5.0.2](https://github.com/googleapis/retry-request/compare/v5.0.1...v5.0.2) (2022-09-14)
 
 
