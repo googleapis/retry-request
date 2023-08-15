@@ -38,7 +38,7 @@
     "async": "^3.0.1",
     "gts": "^5.0.0",
     "jsdoc": "^4.0.0",
-    "jsdoc-fresh": "^2.0.0",
+    "jsdoc-fresh": "^3.0.0",
     "jsdoc-region-tag": "^3.0.0",
     "linkinator": "^4.0.0",
     "lodash.range": "^3.2.0",
