@@ -3,6 +3,7 @@ declare module 'retry-request' {
   import * as teenyRequest from 'teeny-request';
 
   namespace retryRequest {
+    defaults = retryRequest.Options;
     function getNextRetryDelay(retryNumber: number): void;
     interface Options {
       objectMode?: boolean;

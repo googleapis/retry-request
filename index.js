@@ -269,4 +269,5 @@ function getNextRetryDelay(config) {
   );
 }
 
+module.exports.defaults = DEFAULTS;
 module.exports.getNextRetryDelay = getNextRetryDelay;
