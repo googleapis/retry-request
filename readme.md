@@ -3,30 +3,29 @@
 |Retry a [request][request] with built-in [exponential backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/coreErrors#backoff).
 
 ```sh
-$ npm install --save request
+$ npm install --save teeny-request
 $ npm install --save retry-request
 ```
+
 ```js
 var request = require('retry-request', {
-  request: require('request')
+  request: require('teeny-request'),
 });
 ```
 
-It should work the same as `request` in both callback mode and stream mode.
+It should work the same as `request` and `teeny-request` in both callback mode and stream mode.
 
-Note: This module only works when used as a readable stream, i.e. POST requests aren't supported  ([#3](https://github.com/stephenplusplus/retry-request/issues/3)).
+Note: This module only works when used as a readable stream, i.e. POST requests aren't supported ([#3](https://github.com/stephenplusplus/retry-request/issues/3)).
 
 ## Do I need to install `request`?
 
-Yes! You must independently install `request` and provide it to this library:
+Yes! You must independently install `teeny-request` OR `request` (_deprecated_) and provide it to this library:
 
 ```js
 var request = require('retry-request', {
-  request: require('request')
+  request: require('teeny-request'),
 });
 ```
-
-*The code will actually look for the `request` module automatically to save you this step. But, being explicit like in the example is also welcome.*
 
 #### Callback
 
@@ -49,7 +48,7 @@ request(urlThatReturns503)
 
 ## Can I monitor what retry-request is doing internally?
 
-Yes! This project uses [debug](https://www.npmjs.com/package/debug) to provide the current retry attempt, each response status, and the delay computed until the next retry attempt is made. To enable the debug mode, set the environment variable `DEBUG` to *retry-request*.
+Yes! This project uses [debug](https://www.npmjs.com/package/debug) to provide the current retry attempt, each response status, and the delay computed until the next retry attempt is made. To enable the debug mode, set the environment variable `DEBUG` to _retry-request_.
 
 (Thanks for the implementation, @yihaozhadan!)
 
@@ -57,9 +56,12 @@ Yes! This project uses [debug](https://www.npmjs.com/package/debug) to provide t
 
 ### requestOptions
 
-Passed directly to `request`. See the list of options supported: https://github.com/request/request/#requestoptions-callback.
+Passed directly to `request` or `teeny-request`. See the list of options supported:
 
-### opts *(optional)*
+- https://github.com/request/request/#requestoptions-callback
+- https://github.com/googleapis/teeny-request#teenyrequestoptions-callback
+
+### opts _(optional)_
 
 #### `opts.noResponseRetries`
 
@@ -71,7 +73,7 @@ The number of times to retry after a response fails to come through, such as a D
 
 ```js
 var opts = {
-  noResponseRetries: 0
+  noResponseRetries: 0,
 };
 
 request(url, opts, function (err, resp, body) {
@@ -96,7 +98,7 @@ Default: `2`
 
 ```js
 var opts = {
-  retries: 4
+  retries: 4,
 };
 
 request(urlThatReturns503, opts, function (err, resp, body) {
@@ -113,7 +115,7 @@ Default: `0`
 
 ```js
 var opts = {
-  currentRetryAttempt: 1
+  currentRetryAttempt: 1,
 };
 
 request(urlThatReturns503, opts, function (err, resp, body) {
@@ -131,7 +133,7 @@ Default: Returns `true` if [http.incomingMessage](https://nodejs.org/api/http.ht
 var opts = {
   shouldRetryFn: function (incomingHttpMessage) {
     return incomingHttpMessage.statusMessage !== 'OK';
-  }
+  },
 };
 
 request(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
@@ -146,21 +148,19 @@ request(urlThatReturnsNonOKStatusMessage, opts, function (err, resp, body) {
 
 Type: `Function`
 
-Default: `try { require('request') }`
+If we not provided we will throw an error advising you to provide it.
 
-If we cannot locate `request`, we will throw an error advising you to provide it explicitly.
-
-*NOTE: If you override the request function, and it returns a stream in object mode, be sure to set `opts.objectMode` to `true`.*
+_NOTE: If you override the request function, and it returns a stream in object mode, be sure to set `opts.objectMode` to `true`._
 
 ```js
-var originalRequest = require('request').defaults({
+var originalRequest = require('teeny-request').defaults({
   pool: {
-    maxSockets: Infinity
-  }
+    maxSockets: Infinity,
+  },
 });
 
 var opts = {
-  request: originalRequest
+  request: originalRequest,
 };
 
 request(urlThatReturns503, opts, function (err, resp, body) {
@@ -190,9 +190,9 @@ Type: `Number`
 
 Default: `600`
 
-The length of time to keep retrying in seconds. The last sleep period will be shortened as necessary, so that the last retry runs at deadline (and not considerably beyond it).  The total time starting from when the initial request is sent, after which an error will be returned, regardless of the retrying attempts made meanwhile.
+The length of time to keep retrying in seconds. The last sleep period will be shortened as necessary, so that the last retry runs at deadline (and not considerably beyond it). The total time starting from when the initial request is sent, after which an error will be returned, regardless of the retrying attempts made meanwhile.
 
-### cb *(optional)*
+### cb _(optional)_
 
 Passed directly to `request`. See the callback section: https://github.com/request/request/#requestoptions-callback.
 

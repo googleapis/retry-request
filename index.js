@@ -60,6 +60,10 @@ const DEFAULTS = {
 };
 
 function retryRequest(requestOpts, opts, callback) {
+  if (typeof requestOpts === 'string') {
+    requestOpts = {url: requestOpts};
+  }
+
   const streamMode = typeof arguments[arguments.length - 1] !== 'function';
 
   if (typeof opts === 'function') {
@@ -71,12 +75,7 @@ function retryRequest(requestOpts, opts, callback) {
   opts = extend({}, DEFAULTS, opts);
 
   if (typeof opts.request === 'undefined') {
-    try {
-      // eslint-disable-next-line node/no-unpublished-require
-      opts.request = require('request');
-    } catch (e) {
-      throw new Error('A request library must be provided to retry-request.');
-    }
+    throw new Error('A request library must be provided to retry-request.');
   }
 
   let currentRetryAttempt = opts.currentRetryAttempt;
@@ -131,8 +130,16 @@ function retryRequest(requestOpts, opts, callback) {
   }
 
   function makeRequest() {
+    let finishHandled = false;
     currentRetryAttempt++;
     debug(`Current retry attempt: ${currentRetryAttempt}`);
+
+    function handleFinish(args = []) {
+      if (!finishHandled) {
+        finishHandled = true;
+        retryStream.emit('complete', ...args);
+      }
+    }
 
     if (streamMode) {
       streamResponseHandled = false;
@@ -164,7 +171,8 @@ function retryRequest(requestOpts, opts, callback) {
           streamResponseHandled = true;
           onResponse(null, resp, body);
         })
-        .on('complete', retryStream.emit.bind(retryStream, 'complete'));
+        .on('complete', (...params) => handleFinish(params))
+        .on('finish', (...params) => handleFinish(params));
 
       requestStream.pipe(delayStream);
     } else {
@@ -270,4 +278,5 @@ function getNextRetryDelay(config) {
   );
 }
 
+module.exports.defaults = DEFAULTS;
 module.exports.getNextRetryDelay = getNextRetryDelay;

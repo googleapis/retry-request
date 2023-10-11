@@ -5,12 +5,15 @@ const async = require('async');
 const range = require('lodash.range');
 const {describe, it, beforeEach} = require('mocha');
 const {PassThrough} = require('stream');
+const {teenyRequest} = require('teeny-request');
 
 const retryRequest = require('./index.js');
 
+retryRequest.defaults.request = teenyRequest.defaults();
+
 describe('retry-request', () => {
-  const URI_404 = 'http://yahoo.com/theblahstore';
-  const URI_200 = 'http://yahoo.com/';
+  const URI_404 = 'http://google.com/theblahstore';
+  const URI_200 = 'http://google.com/';
   const URI_NON_EXISTENT = 'http://theblahstore';
 
   describe('streams', () => {
