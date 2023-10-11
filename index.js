@@ -60,6 +60,10 @@ const DEFAULTS = {
 };
 
 function retryRequest(requestOpts, opts, callback) {
+  if (typeof requestOpts === 'string') {
+    requestOpts = {url: requestOpts};
+  }
+
   const streamMode = typeof arguments[arguments.length - 1] !== 'function';
 
   if (typeof opts === 'function') {
