@@ -10,7 +10,7 @@
     "docs-test": "linkinator docs",
     "fix": "gts fix",
     "lint": "gts check",
-    "test": "mocha --timeout 0",
+    "test": "mocha",
     "system-test": ""
   },
   "files": [
