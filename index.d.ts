@@ -1,12 +1,12 @@
 declare module 'retry-request' {
-  // eslint-disable-next-line node/no-unpublished-import
   import * as request from 'request';
+  import * as teenyRequest from 'teeny-request';
 
   namespace retryRequest {
     function getNextRetryDelay(retryNumber: number): void;
     interface Options {
       objectMode?: boolean;
-      request?: typeof request;
+      request: typeof request | typeof teenyRequest;
       retries?: number;
       noResponseRetries?: number;
       currentRetryAttempt?: number;
