@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/googleapis/retry-request/compare/v6.0.0...v7.0.0) (2023-10-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove `request` fallback, Update Docs, Update Types ([#107](https://github.com/googleapis/retry-request/issues/107))
+
+### Features
+
+* Remove `request` fallback, Update Docs, Update Types ([#107](https://github.com/googleapis/retry-request/issues/107)) ([ba8abb2](https://github.com/googleapis/retry-request/commit/ba8abb242ff21921a81e3178081806e95a902a68))
+
 ## [6.0.0](https://github.com/googleapis/retry-request/compare/v5.0.2...v6.0.0) (2023-07-20)
 
 
