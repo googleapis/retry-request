@@ -2,12 +2,22 @@ declare module 'retry-request' {
   import * as request from 'request';
   import * as teenyRequest from 'teeny-request';
 
+  type teenyRequestFunction = typeof teenyRequest extends Function
+    ? typeof teenyRequest
+    : never;
+
   namespace retryRequest {
-    defaults = retryRequest.Options;
-    function getNextRetryDelay(retryNumber: number): void;
+    /**
+     * Set the defaults for `retryRequest`.
+     */
+    const defaults: retryRequest.Options;
+    /**
+     * Determines the next retry based on the provided configuration.
+     */
+    function getNextRetryDelay(config: Options): number;
     interface Options {
       objectMode?: boolean;
-      request: typeof request | typeof teenyRequest;
+      request: typeof request | teenyRequestFunction;
       retries?: number;
       noResponseRetries?: number;
       currentRetryAttempt?: number;
