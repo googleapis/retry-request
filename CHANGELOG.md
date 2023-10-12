@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/googleapis/retry-request/compare/v7.0.0...v7.0.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* Types ([#109](https://github.com/googleapis/retry-request/issues/109)) ([35c0260](https://github.com/googleapis/retry-request/commit/35c02608138a4b66cf488e4e1e90cbff05d42c2f))
+
 ## [7.0.0](https://github.com/googleapis/retry-request/compare/v6.0.0...v7.0.0) (2023-10-11)
 
 
