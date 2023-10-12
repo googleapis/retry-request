@@ -7,8 +7,14 @@ declare module 'retry-request' {
     : never;
 
   namespace retryRequest {
+    /**
+     * Set the defaults for `retryRequest`.
+     */
     const defaults: retryRequest.Options;
-    function getNextRetryDelay(retryNumber: number): void;
+    /**
+     * Determines the next retry based on the provided configuration.
+     */
+    function getNextRetryDelay(config: Options): number;
     interface Options {
       objectMode?: boolean;
       request: typeof request | teenyRequestFunction;
