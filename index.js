@@ -1,8 +1,19 @@
 'use strict';
 
 const {PassThrough} = require('stream');
-const debug = require('debug')('retry-request');
 const extend = require('extend');
+
+let debug = () => {};
+if (
+  typeof process !== 'undefined' &&
+  'env' in process &&
+  typeof process.env === 'object' &&
+  process.env.DEBUG === 'retry-request'
+) {
+  debug = message => {
+    console.log('retry-request:', message);
+  };
+}
 
 const DEFAULTS = {
   objectMode: false,
