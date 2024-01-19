@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.2](https://github.com/googleapis/retry-request/compare/v7.0.1...v7.0.2) (2024-01-19)
+
+
+### Bug Fixes
+
+* Get rid of debug runtime dependency ([#118](https://github.com/googleapis/retry-request/issues/118)) ([85e1bd0](https://github.com/googleapis/retry-request/commit/85e1bd0a46630876757344405a6c8620d9de6451))
+
 ## [7.0.1](https://github.com/googleapis/retry-request/compare/v7.0.0...v7.0.1) (2023-10-12)
 
 
