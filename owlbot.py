@@ -17,4 +17,4 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-node.owlbot_main(templates_excludes=["README.md", "LICENSE", ".github/workflows/ci.yaml"])
+node.owlbot_main(templates_excludes=["README.md", "LICENSE", ".github/workflows", ".github/scripts", ".github/ISSUE_TEMPLATE"])
