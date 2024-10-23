@@ -6,4 +6,4 @@
 
 
 # Unless specified, the jsteam is the default owner for nodejs repositories.
-*     @googleapis/jsteam
+*     @googleapis/jsteam-handwritten-libraries @googleapis/jsteam
