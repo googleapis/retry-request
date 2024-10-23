@@ -1,5 +1,6 @@
 {
   "library_type": "OTHER",
   "release_level": "stable",
-  "client_documentation": "https://github.com/googleapis/retry-request"
+  "client_documentation": "https://github.com/googleapis/retry-request",
+  "codeowner_team": "@googleapis/jsteam-handwritten-libraries"
 }
