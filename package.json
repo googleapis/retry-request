@@ -27,22 +27,22 @@
   "author": "Stephen Sawchuk <sawchuk@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "dependencies": {
-    "@types/request": "^2.48.8",
+    "@types/request": "^2.48.12",
     "extend": "^3.0.2",
     "teeny-request": "^9.0.0"
   },
   "devDependencies": {
-    "async": "^3.0.1",
-    "gts": "^5.0.0",
-    "jsdoc": "^4.0.0",
+    "async": "^3.2.6",
+    "gts": "^6.0.2",
+    "jsdoc": "^4.0.4",
     "jsdoc-fresh": "^3.0.0",
     "jsdoc-region-tag": "^3.0.0",
-    "linkinator": "^4.0.0",
+    "linkinator": "^6.1.2",
     "lodash.range": "^3.2.0",
-    "mocha": "^10.2.0",
-    "typescript": "^5.1.6"
+    "mocha": "^11.1.0",
+    "typescript": "^5.7.3"
   }
 }
