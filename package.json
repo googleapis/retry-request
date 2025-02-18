@@ -32,7 +32,7 @@
   "dependencies": {
     "@types/request": "^2.48.12",
     "extend": "^3.0.2",
-    "teeny-request": "^9.0.0"
+    "teeny-request": "^10.0.0"
   },
   "devDependencies": {
     "async": "^3.2.6",
