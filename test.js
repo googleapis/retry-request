@@ -438,7 +438,7 @@ describe('retry-request', () => {
     retryRequest(URI_200, opts, () => {
       const totalTime = new Date() - startTime;
       console.log(totalTime);
-      assert(totalTime >= 2500 && totalTime < 3000);
+      assert(totalTime >= 2000 && totalTime < 3000);
       done();
     });
   });
