@@ -285,7 +285,7 @@ function getNextRetryDelay(config) {
   return Math.min(
     calculatedNextRetryDelay,
     maxAllowableDelayMs,
-    maxRetryDelayMs
+    maxRetryDelayMs,
   );
 }
 

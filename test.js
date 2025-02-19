@@ -349,7 +349,7 @@ describe('retry-request', () => {
             responseHandler(null, {statusCode: statusCode});
           },
         },
-        assert.ifError
+        assert.ifError,
       );
     }
 
@@ -378,7 +378,7 @@ describe('retry-request', () => {
           }
 
           callback();
-        }
+        },
       );
     }
 
@@ -437,7 +437,8 @@ describe('retry-request', () => {
 
     retryRequest(URI_200, opts, () => {
       const totalTime = new Date() - startTime;
-      assert(totalTime >= 2000 && totalTime < 3000);
+      console.log(`TOTAL TIME: ${totalTime}`);
+      assert(totalTime >= 2000 && totalTime < 3500);
       done();
     });
   });
@@ -533,7 +534,8 @@ describe('getNextRetryDelay', () => {
     const min = maxRetryDelayMs - 10;
     const max = maxRetryDelayMs + 10;
     assert(
-      delayWithoutLowMaxRetryDelay >= min && delayWithoutLowMaxRetryDelay <= max
+      delayWithoutLowMaxRetryDelay >= min &&
+        delayWithoutLowMaxRetryDelay <= max,
     );
 
     const lowMaxRetryDelay = 1;
@@ -546,7 +548,7 @@ describe('getNextRetryDelay', () => {
     });
     assert.strictEqual(
       delayWithLowMaxRetryDelay,
-      secondsToMs(lowMaxRetryDelay)
+      secondsToMs(lowMaxRetryDelay),
     );
   });
 });

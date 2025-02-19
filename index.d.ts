@@ -31,11 +31,11 @@ declare module 'retry-request' {
   function retryRequest(
     requestOpts: request.Options,
     opts: retryRequest.Options,
-    callback?: request.RequestCallback
+    callback?: request.RequestCallback,
   ): {abort: () => void};
   function retryRequest(
     requestOpts: request.Options,
-    callback?: request.RequestCallback
+    callback?: request.RequestCallback,
   ): {abort: () => void};
 
   export = retryRequest;
