@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/googleapis/retry-request/compare/v7.0.2...v8.0.0) (2025-02-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to Node 18 ([#137](https://github.com/googleapis/retry-request/issues/137))
+
+### Miscellaneous Chores
+
+* Upgrade to Node 18 ([#137](https://github.com/googleapis/retry-request/issues/137)) ([5ec12e5](https://github.com/googleapis/retry-request/commit/5ec12e55b0c2aa3d178c1f9351537e5b96663427))
+
 ## [7.0.2](https://github.com/googleapis/retry-request/compare/v7.0.1...v7.0.2) (2024-01-19)
 
 
