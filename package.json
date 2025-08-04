@@ -30,11 +30,11 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@types/request": "^2.48.13",
     "extend": "^3.0.2",
     "teeny-request": "^9.0.0"
   },
   "devDependencies": {
+    "@types/request": "^2.48.13",
     "async": "^3.0.1",
     "gts": "^5.0.0",
     "jsdoc": "^4.0.0",
