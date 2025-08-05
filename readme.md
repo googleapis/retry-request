@@ -17,7 +17,7 @@ var request = require('retry-request', {
 
 It should work the same as `request` and `teeny-request` in both callback mode and stream mode.
 
-Note: This module only works when used as a readable stream, i.e. POST requests aren't supported ([#3](https://github.com/stephenplusplus/retry-request/issues/3)).
+Note: This module only works when used as a readable stream, i.e. POST requests aren't supported ([#3]([https://github.com/stephenplusplus/retry-request/issues/3](https://github.com/googleapis/retry-request/issues/3))).
 
 ## Do I need to install `request`?
 
