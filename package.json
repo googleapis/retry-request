@@ -30,7 +30,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@types/request": "^2.48.12",
+    "@types/request": "^2.48.13",
     "extend": "^3.0.2",
     "teeny-request": "^10.0.0"
   },
