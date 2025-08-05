@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.2](https://github.com/googleapis/retry-request/compare/v8.0.1...v8.0.2) (2025-08-05)
+
+
+### Bug Fixes
+
+* Move"@types/request" to dev ([a42f283](https://github.com/googleapis/retry-request/commit/a42f283ad3d30106f542e7d9312f13182b805209))
+
 ## [8.0.1](https://github.com/googleapis/retry-request/compare/v8.0.0...v8.0.1) (2025-08-05)
 
 
