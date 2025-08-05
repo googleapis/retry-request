@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.1](https://github.com/googleapis/retry-request/compare/v8.0.0...v8.0.1) (2025-08-05)
+
+
+### Bug Fixes
+
+* Resolve vulnerability ([#150](https://github.com/googleapis/retry-request/issues/150)) ([5a446a1](https://github.com/googleapis/retry-request/commit/5a446a18cdd06dcdeda4575d4086b8bb86e16353))
+
 ## [8.0.0](https://github.com/googleapis/retry-request/compare/v7.0.2...v8.0.0) (2025-02-19)
 
 
