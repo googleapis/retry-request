@@ -36,7 +36,7 @@
   "devDependencies": {
     "@types/request": "^2.48.13",
     "async": "^3.2.6",
-    "gts": "^6.0.2",
+    "gts": "^7.0.0",
     "jsdoc": "^4.0.4",
     "jsdoc-fresh": "^3.0.0",
     "jsdoc-region-tag": "^3.0.0",
