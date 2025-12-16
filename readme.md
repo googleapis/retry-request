@@ -1,4 +1,4 @@
-**_THIS REPOSITORY AND PACKAGE WILL BE DEPRECATED IN JULY 2024. RELEVANT FUNCTIONALITIES HAVE BEEN MOVED TO [GOOGLEAPIS/GAXIOS](https://github.com/googleapis/gaxios)_**
+**_This repository has been migrated to googleapis/google-cloud-node-core._**
 
 |![retry-request](logo.png)
 |:-:
