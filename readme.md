@@ -1,4 +1,4 @@
-**_THIS REPOSITORY AND PACKAGE WILL BE DEPRECATED IN JULY 2024. RELEVANT FUNCTIONALITIES HAVE BEEN MOVED TO [GOOGLEAPIS/GAXIOS](https://github.com/googleapis/gaxios)_**
+**_THIS REPOSITORY IS DEPRECATED. ALL OF ITS CONTENT AND HISTORY HAS BEEN MOVED TO [GOOGLE-CLOUD-NODE-CORE](https://github.com/googleapis/google-cloud-node-core/tree/main/packages/retry-request)_**
 
 |![retry-request](logo.png)
 |:-:
